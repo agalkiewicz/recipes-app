@@ -16,6 +16,6 @@ public class RecipeController {
 
     @GetMapping("/")
     Collection<Recipe> list() {
-        return recipeRepository.findAll();
+        return (Collection<Recipe>) recipeRepository.findAll();
     }
 }
