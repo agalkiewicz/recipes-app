@@ -1,39 +1,47 @@
 package com.example.recipesapp.recipe;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
-@Entity
+@Entity(name = "recipes")
 public class Recipe {
 
     @Id
-    @GeneratedValue
-    private Integer id;
-    private String name;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "recipe_generator")
+    @SequenceGenerator(name = "recipe_generator", sequenceName = "recipe_sequence", allocationSize = 1)
+    private Long id;
+
+    private String title;
+
+    private String ingredients;
 
     public Recipe() {
     }
 
-    public Recipe(String name) {
-        this.name = name;
+    public Recipe(String title) {
+        this.title = title;
     }
 
-    public Integer getId() {
-        return id;
+    public String getTitle() {
+        return title;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getName() {
-        return name;
+    public String getIngredients() {
+        return ingredients;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setIngredients(String ingredients) {
+        this.ingredients = ingredients;
     }
 
+    @Override
+    public String toString() {
+        String result = String.format("Recipe[id=%d, title='%s']%n", id, title);
+        result += String.format("Ingredient[ingredient='%s']%n", ingredients);
 
+        return result;
+    }
 }
