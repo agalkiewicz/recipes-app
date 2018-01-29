@@ -1,0 +1,10 @@
+<h2>Dodaj nowy przepis</h2>
+
+<div>
+  <label>Strona z przepisem:
+    <input #recipeUrl/>
+  </label>
+  <button (click)="add(recipeUrl.value); recipeUrl.value=''">
+    add
+  </button>
+</div>

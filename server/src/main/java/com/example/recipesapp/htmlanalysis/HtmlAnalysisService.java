@@ -1,5 +1,6 @@
 package com.example.recipesapp.htmlanalysis;
 
+import com.example.recipesapp.dto.RecipeDTO;
 import com.example.recipesapp.recipe.Recipe;
 import com.example.recipesapp.recipe.RecipeRepository;
 import org.jsoup.Jsoup;
@@ -19,22 +20,27 @@ public class HtmlAnalysisService {
         this.recipeRepository = recipeRepository;
     }
 
-    public void analyse(String url) {
-        try {
-            Document doc = Jsoup.connect(url).get();
-            Elements elements = doc.select("[itemprop=recipeIngredient]");
+    public RecipeDTO analyse(String url) throws IOException {
+        Recipe recipe = new Recipe();
 
-            StringBuilder ingredients = new StringBuilder();
-            Recipe recipe = new Recipe();
-            for (Element element : elements) {
-                System.out.println(element.text());
-                ingredients.append(element.text() + "@");
-            }
-            recipe.setIngredients(ingredients.toString());
-            System.out.println(recipe);
-            recipeRepository.save(recipe);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!(url.contains("http://") || url.contains("https://"))) {
+            String protocol = "http://";
+            url = protocol + url;
         }
+
+        Document doc = Jsoup.connect(url).get();
+        Elements elements = doc.select("[itemprop=recipeIngredient]");
+
+        StringBuilder ingredients = new StringBuilder();
+        for (Element element : elements) {
+            System.out.println(element.text());
+            ingredients.append(element.text() + "@");
+        }
+        recipe.setIngredients(ingredients.toString());
+        System.out.println(recipe);
+
+        recipeRepository.save(recipe);
+
+        return new RecipeDTO(recipe);
     }
 }
