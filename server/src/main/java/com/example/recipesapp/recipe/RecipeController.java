@@ -2,6 +2,7 @@ package com.example.recipesapp.recipe;
 
 import com.example.recipesapp.dto.RecipeDTO;
 import com.example.recipesapp.dto.RecipeUrlDTO;
+import com.example.recipesapp.exceptions.ScopeNotFoundException;
 import com.example.recipesapp.htmlanalysis.HtmlAnalysisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,17 +49,22 @@ public class RecipeController {
         }
     }
 
-    @PostMapping(consumes="application/json", produces="application/json")
+    @PostMapping(consumes = "application/json", produces = "application/json")
     ResponseEntity<RecipeDTO> add(@RequestBody RecipeUrlDTO recipeUrlDTO) {
         try {
             RecipeDTO recipe = htmlAnalysisService.analyse(recipeUrlDTO.getUrl());
 
             logger.info("Hardly created recipe: {}", recipe.toString());
 
+//            htmlAnalysisService.analyseJson(recipeUrlDTO.getUrl());
+
             return new ResponseEntity<>(recipe, HttpStatus.CREATED);
         } catch (IOException e) {
             logger.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (ScopeNotFoundException e) {
+            logger.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
