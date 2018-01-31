@@ -53,10 +53,7 @@ public class RecipeController {
     ResponseEntity<RecipeDTO> add(@RequestBody RecipeUrlDTO recipeUrlDTO) {
         try {
             RecipeDTO recipe = htmlAnalysisService.analyse(recipeUrlDTO.getUrl());
-
             logger.info("Hardly created recipe: {}", recipe.toString());
-
-//            htmlAnalysisService.analyseJson(recipeUrlDTO.getUrl());
 
             return new ResponseEntity<>(recipe, HttpStatus.CREATED);
         } catch (IOException e) {

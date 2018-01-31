@@ -5,7 +5,7 @@ import com.example.recipesapp.exceptions.ScopeNotFoundException;
 import com.example.recipesapp.recipe.Recipe;
 import com.example.recipesapp.recipe.RecipeRepository;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.gson.GsonBuilder;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,8 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.Map;
 
 @Service
 public class HtmlAnalysisService {
@@ -38,53 +36,42 @@ public class HtmlAnalysisService {
 
         Document document = Jsoup.connect(url).get();
         Recipe recipe = new Recipe(url);
+        RecipeDTO recipeDTO = null;
 
-//        if (!analyseJson(document, recipe)) {
+        try {
+            recipeDTO = analyseJson(document);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
             analyseHtml(document, recipe);
-//        }
+        }
+
+        if (recipeDTO == null) {
+            analyseHtml(document, recipe);
+        } else {
+            recipeDTO.setUrl(url);
+            return recipeDTO;
+        }
 
         return new RecipeDTO(recipe);
     }
 
-    private boolean analyseJson(Document document, Recipe recipe) {
+    private RecipeDTO analyseJson(Document document) {
         Elements scriptElements = document.select("script[type=\"application/ld+json\"]");
 
-        boolean found = false;
-        Gson gson = new Gson();
-        Type type = new TypeToken<Map<String, String>>(){}.getType();
-        Map<String, String> jsonElementsMap;
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(RecipeDTO.class, new RecipeDTOAdapter());
+        final Gson gson = gsonBuilder.create();
+        RecipeDTO recipe = null;
 
         for (Element scriptElement : scriptElements) {
-             jsonElementsMap = gson.fromJson(scriptElement.html(), type);
+            recipe = gson.fromJson(scriptElement.html(), RecipeDTO.class);
 
-            if (jsonElementsMap.containsKey("@context") && jsonElementsMap.get("@context").contains("schema.org") &&
-                    jsonElementsMap.containsKey("@type") && jsonElementsMap.get("@type").contains("Recipe")) {
-                found = true;
-
-                if (jsonElementsMap.containsKey("name")) {
-                    recipe.setTitle(jsonElementsMap.get("name"));
-                }
-                if (jsonElementsMap.containsKey("image")) {
-                    recipe.setImage(jsonElementsMap.get("image"));
-                }
-                if (jsonElementsMap.containsKey("description")) {
-                    recipe.setDescription(jsonElementsMap.get("description"));
-                }
-                if (jsonElementsMap.containsKey("recipeInstructions")) {
-                    recipe.setInstructions(jsonElementsMap.get("recipeInstructions"));
-                }
-                if (jsonElementsMap.containsKey("recipeIngredient")) {
-                    recipe.setIngredients(jsonElementsMap.get("recipeIngredient"));
-                }
-                if (jsonElementsMap.containsKey("recipeCategory")) {
-                    recipe.setCategories(jsonElementsMap.get("recipeCategory"));
-                }
-            } else {
-                continue;
+            if (recipe != null) {
+                break;
             }
         }
 
-        return found;
+        return recipe;
     }
 
     private void analyseHtml(Document document, Recipe recipe) throws ScopeNotFoundException {
