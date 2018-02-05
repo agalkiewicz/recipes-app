@@ -35,36 +35,37 @@ public class HtmlAnalysisService {
         }
 
         Document document = Jsoup.connect(url).get();
-        Recipe recipe = new Recipe(url);
-        RecipeDTO recipeDTO = null;
+        Recipe recipe = null;
 
         try {
-            recipeDTO = analyseJson(document);
+            recipe = analyseJson(document);
         } catch (Exception e) {
             logger.error(e.getMessage());
-            analyseHtml(document, recipe);
+            recipe = null;
         }
 
-        if (recipeDTO == null) {
-            analyseHtml(document, recipe);
+        if (recipe == null) {
+            recipe = analyseHtml(document);
+            recipe.setUrl(url);
+            recipeRepository.save(recipe);
         } else {
-            recipeDTO.setUrl(url);
-            return recipeDTO;
+            recipe.setUrl(url);
+            recipeRepository.save(recipe);
         }
 
         return new RecipeDTO(recipe);
     }
 
-    private RecipeDTO analyseJson(Document document) {
+    private Recipe analyseJson(Document document) {
         Elements scriptElements = document.select("script[type=\"application/ld+json\"]");
 
         final GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(RecipeDTO.class, new RecipeDTOAdapter());
+        gsonBuilder.registerTypeAdapter(Recipe.class, new RecipeAdapter());
         final Gson gson = gsonBuilder.create();
-        RecipeDTO recipe = null;
+        Recipe recipe = null;
 
         for (Element scriptElement : scriptElements) {
-            recipe = gson.fromJson(scriptElement.html(), RecipeDTO.class);
+            recipe = gson.fromJson(scriptElement.html(), Recipe.class);
 
             if (recipe != null) {
                 break;
@@ -74,15 +75,16 @@ public class HtmlAnalysisService {
         return recipe;
     }
 
-    private void analyseHtml(Document document, Recipe recipe) throws ScopeNotFoundException {
-        Elements elements = document.select("[itemtype*=schema.org/Recipe]");
+    private Recipe analyseHtml(Document document) throws ScopeNotFoundException {
+        Recipe recipe = new Recipe();
 
+        Elements elements = document.select("[itemtype*=schema.org/Recipe]");
         if (elements.size() != 0) {
             StringBuilder stringBuilder = new StringBuilder();
             Element scope = elements.get(0);
-            elements = scope.select("[itemprop=recipeIngredient]");
+            elements = document.select("[itemprop=recipeIngredient]");
             if (elements.size() == 0) {
-                elements = scope.select("[itemprop=ingredients]");
+                elements = document.select("[itemprop=ingredients]");
             }
             if (elements.size() != 0) {
                 for (Element element : elements) {
@@ -93,7 +95,7 @@ public class HtmlAnalysisService {
                 stringBuilder.setLength(0);
             }
 
-            elements = scope.select("[itemprop=recipeInstructions]");
+            elements = document.select("[itemprop=recipeInstructions]");
             if (elements.size() != 0) {
                 for (Element element : elements) {
                     logger.debug(element.text());
@@ -121,8 +123,9 @@ public class HtmlAnalysisService {
 
             elements = scope.select("[itemprop=image]");
             if (elements.size() != 0) {
-                Element image = elements.get(0);
-                String imageUrl = image.attr("src");
+                Element image = elements.last();
+                elements = image.select("[src]");
+                String imageUrl = elements.get(0).attr("src");
 
                 if (!(imageUrl.contains("http://") || imageUrl.contains("https://"))) {
                     imageUrl = "http://" + imageUrl;
@@ -140,10 +143,10 @@ public class HtmlAnalysisService {
                 recipe.setCategories(stringBuilder.toString());
                 stringBuilder.setLength(0);
             }
-
-            recipeRepository.save(recipe);
         } else {
             throw new ScopeNotFoundException();
         }
+
+        return recipe;
     }
 }

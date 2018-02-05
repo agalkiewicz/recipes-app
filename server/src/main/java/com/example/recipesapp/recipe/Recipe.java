@@ -1,5 +1,7 @@
 package com.example.recipesapp.recipe;
 
+import com.example.recipesapp.dto.RecipeDTO;
+
 import javax.persistence.*;
 
 @Entity(name = "recipes")

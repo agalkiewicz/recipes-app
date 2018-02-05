@@ -26,6 +26,7 @@ export class RecipesComponent implements OnInit {
       .subscribe(recipe => {
         this.recipes.push(recipe);
         console.log(this.recipes.length);
+        console.log(recipe);
       });
 
   }
