@@ -4,8 +4,10 @@ import com.example.recipesapp.dto.RecipeDTO;
 import com.example.recipesapp.dto.RecipeUrlDTO;
 import com.example.recipesapp.exceptions.ScopeNotFoundException;
 import com.example.recipesapp.htmlanalysis.HtmlAnalysisService;
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -62,6 +64,9 @@ public class RecipeController {
         } catch (ScopeNotFoundException e) {
             logger.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        } catch (DataIntegrityViolationException e) {
+            logger.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

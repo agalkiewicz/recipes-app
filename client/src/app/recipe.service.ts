@@ -53,6 +53,8 @@ export class RecipeService {
       // TODO: better job of transforming error for user consumption
       if (error.status === 501) {
         this.log(`Nie można przeanalizować treści podanej strony. Brak znaczników Schema.org`);
+      } else if (error.status === 409) {
+        this.log(`Przepis z podanej strony jest już zapisany.`);
       } else {
         this.log(`${operation} failed: ${error.message}`);
       }
