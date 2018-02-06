@@ -15,9 +15,6 @@ export class RecipesComponent implements OnInit {
   }
 
   add(url: string): void {
-    console.log('add');
-    console.log(this.recipes.length);
-
     url = url.trim();
     if (!url) {
       return;
@@ -25,8 +22,6 @@ export class RecipesComponent implements OnInit {
     this.recipeService.add({url: url} as RecipeUrlDto)
       .subscribe(recipe => {
         this.recipes.push(recipe);
-        console.log(this.recipes.length);
-        console.log(recipe);
       });
 
   }
@@ -35,9 +30,6 @@ export class RecipesComponent implements OnInit {
     this.recipeService.getAll()
       .subscribe(recipes => {
         this.recipes = recipes;
-        console.log('getAll');
-        console.log(recipes.length);
-        console.log(this.recipes.length);
       });
   }
 
