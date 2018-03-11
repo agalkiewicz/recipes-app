@@ -1,0 +1,52 @@
+.recipe-card {
+  height: 280px;
+  margin-bottom: 5%;
+
+  .mat-card-image {
+    height: 210px;
+  }
+
+  .recipe-title {
+    margin-bottom: 0;
+  }
+
+  mat-card-content {
+    font-size: 1.5rem;
+    font-family: Raleway, sans-serif;
+  }
+}
+
+.add-new-recipe {
+  display: flex;
+  margin-bottom: 1rem;
+
+  & > div:first-child {
+    width: 55%;
+  }
+  & > div:nth-child(2) {
+    width: 44%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    & > div:first-child {
+      align-self: flex-start;
+    }
+
+    & > div:nth-child(2) {
+      width: 100%;
+
+      .mat-form-field {
+        width: 74%;
+      }
+
+      button {
+        width: 25%;
+      }
+    }
+  }
+}
+
+.top-paginator {
+  margin-bottom: 0.8rem;
+}

@@ -36,7 +36,7 @@ public class RecipeController {
     @GetMapping()
     ResponseEntity<List<RecipeDTO>> getAll() {
         try {
-            List<Recipe> recipes = recipeRepository.findAll();
+            List<Recipe> recipes = recipeRepository.findAllByOrderByIdDesc();
 
             List<RecipeDTO> recipeDTOList = new ArrayList<>();
             for (Recipe recipe : recipes) {

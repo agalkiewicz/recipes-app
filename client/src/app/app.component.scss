@@ -1,0 +1,13 @@
+@import "../variables.scss";
+
+mat-toolbar {
+  background-color: $purple-dark;
+  height: 100px;
+}
+
+.logo {
+  height: 60%;
+  margin-left: auto;
+  margin-right: auto;
+  //width: 50%;
+}
