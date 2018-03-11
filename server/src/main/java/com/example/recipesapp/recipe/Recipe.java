@@ -1,5 +1,7 @@
 package com.example.recipesapp.recipe;
 
+import com.example.recipesapp.dto.RecipeDTO;
+
 import javax.persistence.*;
 
 @Entity(name = "recipes")
@@ -14,11 +16,29 @@ public class Recipe {
 
     private String ingredients;
 
+    private String url;
+
+    private String image;
+
+    private String description;
+
+    private String instructions;
+
+    private String categories;
+
     public Recipe() {
     }
 
-    public Recipe(String title) {
-        this.title = title;
+    public Recipe(String url) {
+        this.url = url;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -37,11 +57,54 @@ public class Recipe {
         this.ingredients = ingredients;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getInstructions() {
+        return instructions;
+    }
+
+    public void setInstructions(String instructions) {
+        this.instructions = instructions;
+    }
+
+    public String getCategories() {
+        return categories;
+    }
+
+    public void setCategories(String categories) {
+        this.categories = categories;
+    }
+
     @Override
     public String toString() {
-        String result = String.format("Recipe[id=%d, title='%s']%n", id, title);
-        result += String.format("Ingredient[ingredient='%s']%n", ingredients);
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(String.format("Recipe[id=%d, title='%s', url='%s'\n, image='%s'\n", id, title, url, image));
+        stringBuilder.append(String.format("ingredients='%s'\n", ingredients));
+        stringBuilder.append(String.format("instructions='%s'\n", instructions));
+        stringBuilder.append(String.format("categories='%s']", categories));
 
-        return result;
+        return stringBuilder.toString();
     }
 }
