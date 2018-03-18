@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import { Recipe } from '../dto/recipe';
-import { RecipeUrlDto } from '../dto/recipe-url-dto';
-import { RecipeService } from '../recipe.service';
+import {Recipe} from '../dto/recipe';
+import {RecipeUrlDto} from '../dto/recipe-url-dto';
+import {RecipeService} from '../recipe.service';
 import {MatPaginator, PageEvent} from '@angular/material';
 
 @Component({
@@ -16,8 +16,8 @@ export class RecipesComponent implements OnInit {
   recipesLength = 0;
   pageSize = 12;
 
-  @ViewChild(MatPaginator) bottomPaginator: MatPaginator;
-  @ViewChild(MatPaginator) topPaginator: MatPaginator;
+  @ViewChild('bottomPaginator') bottomPaginator: MatPaginator;
+  @ViewChild('topPaginator') topPaginator: MatPaginator;
 
   constructor(private recipeService: RecipeService) {
   }
