@@ -33,8 +33,8 @@ public class RecipeController {
         this.recipeRepository = recipeRepository;
     }
 
-    @GetMapping()
-    ResponseEntity<List<RecipeDTO>> getAll() {
+    @GetMapping
+    public ResponseEntity<List<RecipeDTO>> getAll() {
         try {
             List<Recipe> recipes = recipeRepository.findAllByOrderByIdDesc();
 
@@ -52,7 +52,7 @@ public class RecipeController {
     }
 
     @PostMapping(consumes = "application/json", produces = "application/json")
-    ResponseEntity<RecipeDTO> add(@RequestBody RecipeUrlDTO recipeUrlDTO) {
+    public ResponseEntity<RecipeDTO> add(@RequestBody RecipeUrlDTO recipeUrlDTO) {
         try {
             RecipeDTO recipe = htmlAnalysisService.analyse(recipeUrlDTO.getUrl());
             logger.info("Hardly created recipe: {}", recipe.toString());
@@ -67,6 +67,22 @@ public class RecipeController {
         } catch (DataIntegrityViolationException e) {
             logger.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.CONFLICT);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<RecipeDTO> get(@PathVariable Long id) {
+        try {
+            RecipeDTO recipe = new RecipeDTO(recipeRepository.findOne(id));
+            logger.info("Get a recipe to the client app: {}", recipe.toString());
+
+            return new ResponseEntity<>(recipe, HttpStatus.OK);
+        } catch (NullPointerException e) {
+            logger.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

@@ -5,9 +5,23 @@ mat-toolbar {
   height: 100px;
 }
 
-.logo {
-  height: 60%;
+a.logo {
   margin-left: auto;
   margin-right: auto;
-  //width: 50%;
+
+  .logo {
+    height: 60%;
+  }
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+h3 {
+  font-size: 1rem;
 }

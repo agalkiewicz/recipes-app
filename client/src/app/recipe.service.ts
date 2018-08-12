@@ -38,6 +38,14 @@ export class RecipeService {
       );
   }
 
+  getOne(id: number): Observable<Recipe> {
+    const url = `${this.recipesUrl}/${id}`;
+    return this.http.get<Recipe>(url).pipe(
+      tap(_ => this.log(`Wyciągnięto przepis, id=${id}`)),
+      catchError(this.handleError<Recipe>(`get recipe`, null))
+    );
+  }
+
   /**
    * Handle Http operation that failed.
    * Let the app continue.

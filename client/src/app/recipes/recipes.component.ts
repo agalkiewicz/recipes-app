@@ -50,7 +50,6 @@ export class RecipesComponent implements OnInit {
       .subscribe(recipes => {
         this.recipes = recipes;
         this.recipesLength = this.recipes.length;
-        console.log(this.recipes);
         this.pagedRecipes = this.recipes.slice(0, this.pageSize);
       });
   }

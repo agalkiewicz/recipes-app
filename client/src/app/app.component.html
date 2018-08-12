@@ -1,7 +1,7 @@
 <mat-toolbar>
-  <img class="logo" src="../assets/images/logo1.png" alt="Przepiśnik - logo">
+  <a routerLink="/" class="logo">
+    <img class="logo" src="../assets/images/logo1.png" alt="Przepiśnik - logo">
+  </a>
 </mat-toolbar>
 
-<app-recipe></app-recipe>
-<app-recipes></app-recipes>
-<app-messages></app-messages>
+<router-outlet></router-outlet>

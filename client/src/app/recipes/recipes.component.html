@@ -24,7 +24,7 @@
   </mat-paginator>
   <div fxLayout="row" fxLayout.xs="column" fxLayoutWrap fxLayoutGap="1%">
     <div *ngFor="let recipe of pagedRecipes" fxFlex="24%" fxFlex.sm="49%" fxFlex.md="32%">
-      <a href="https://www.przepisy.pl/przepis/kruche-ciasto-z-masa-orzechowa">
+      <a routerLink="/recipes/{{recipe.id}}">
         <mat-card class="recipe-card">
           <img mat-card-image class="img-responsive"
                [src]="recipe.image">
@@ -44,4 +44,3 @@
                  class="bottom-paginator">
   </mat-paginator>
 </div>
-
