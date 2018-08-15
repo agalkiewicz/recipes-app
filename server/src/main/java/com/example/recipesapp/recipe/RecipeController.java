@@ -88,4 +88,23 @@ public class RecipeController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<RecipeDTO>> findByTerms(@RequestParam(value = "terms", required = true) List<String> terms) {
+        try {
+            List<Recipe> recipes = recipeRepository.findAllByOrderByIdDesc();
+
+            List<RecipeDTO> recipeDTOList = new ArrayList<>();
+            for (Recipe recipe : recipes) {
+                recipeDTOList.add(new RecipeDTO(recipe));
+            }
+
+            logger.info("Get recipes by terms: ");
+
+            return new ResponseEntity<>(recipeDTOList, HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

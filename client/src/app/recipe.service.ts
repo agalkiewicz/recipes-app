@@ -46,6 +46,17 @@ export class RecipeService {
     );
   }
 
+  searchByTerms(terms: string[]) {
+    console.log('service searchByTerms');
+
+    const url = `${this.recipesUrl}/search?terms=${JSON.stringify(terms)}`;
+
+    return this.http.get<Recipe[]>(url).pipe(
+      tap(recipes => this.log(`Znaleziono przepisy: ${recipes}`)),
+      catchError(this.handleError('getAll', []))
+    );
+  }
+
   /**
    * Handle Http operation that failed.
    * Let the app continue.
