@@ -17,33 +17,19 @@
 }
 
 .add-new-recipe {
-  display: flex;
+  //display: flex;
   margin-bottom: 1rem;
 
   & > div:first-child {
-    width: 55%;
+    width: 100%;
   }
-  & > div:nth-child(2) {
-    width: 44%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
 
-    & > div:first-child {
-      align-self: flex-start;
-    }
+  mat-form-field {
+    width: 53%;
+  }
 
-    & > div:nth-child(2) {
-      width: 100%;
-
-      .mat-form-field {
-        width: 74%;
-      }
-
-      button {
-        width: 25%;
-      }
-    }
+  button {
+    width: 45%;
   }
 }
 

@@ -1,16 +1,13 @@
 <div class="container">
   <div class="add-new-recipe">
-    <div></div>
     <div>
-      <div>
-        <span>Wklej adres strony z przepisem:</span>
-      </div>
-      <div>
-        <mat-form-field>
-          <input #recipeUrl matInput>
-        </mat-form-field>
-        <button mat-raised-button (click)="add(recipeUrl.value); recipeUrl.value=''">Dodaj przepis</button>
-      </div>
+      Wklej adres strony z przepisem:
+    </div>
+    <div>
+      <mat-form-field>
+        <input #recipeUrl matInput>
+      </mat-form-field>
+      <button mat-raised-button (click)="add(recipeUrl.value); recipeUrl.value=''">Dodaj przepis</button>
     </div>
   </div>
 

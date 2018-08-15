@@ -11,15 +11,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { RecipesComponent } from './recipes/recipes.component';
 import { MessagesComponent } from './messages/messages.component';
 import { MessageService } from './message.service';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material';
 import { RecipeComponent } from './recipe/recipe.component';
 import { MatPaginatorIntlPL } from './mat-paginator-intl-pl';
 import { AppRoutingModule } from './app-routing.module';
 import { SignInComponent } from './sign-in/sign-in.component';
-import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -37,10 +32,6 @@ import { FormsModule } from '@angular/forms';
     FlexLayoutModule,
     MatPaginatorModule,
     MatTableModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
     AppRoutingModule
   ],
   providers: [
