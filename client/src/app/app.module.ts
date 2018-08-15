@@ -3,7 +3,10 @@ import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatCardModule } from '@angular/material/card';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { MatPaginatorIntl, MatPaginatorModule, MatTableModule } from '@angular/material';
+import {
+  MatChipsModule, MatIcon, MatIconModule, MatPaginatorIntl, MatPaginatorModule,
+  MatTableModule
+} from '@angular/material';
 
 import { AppComponent } from './app.component';
 import { RecipeService } from './recipe.service';
@@ -41,7 +44,9 @@ import { FormsModule } from '@angular/forms';
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    AppRoutingModule
+    AppRoutingModule,
+    MatChipsModule,
+    MatIconModule
   ],
   providers: [
     RecipeService,

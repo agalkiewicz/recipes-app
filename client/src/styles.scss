@@ -44,11 +44,11 @@ mat-form-field {
   }
 }
 
-@media only screen and (max-width: 599px) {
-  mat-paginator {
-    width: 99.5%;
-  }
-}
+//@media only screen and (max-width: 599px) {
+//  mat-paginator {
+//    width: 99.5%;
+//  }
+//}
 
 @media only screen and (min-width: 600px) {
   mat-paginator {
@@ -66,4 +66,8 @@ mat-form-field {
   mat-paginator {
     width: 99%;
   }
+}
+
+.container {
+  margin-top: 130px;
 }

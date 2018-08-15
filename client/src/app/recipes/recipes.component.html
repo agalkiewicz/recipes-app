@@ -1,16 +1,36 @@
 <div class="container">
-  <div class="add-new-recipe">
-    <div></div>
+
+  <div class="recipe-search">
     <div>
-      <div>
-        <span>Wklej adres strony z przepisem:</span>
-      </div>
-      <div>
-        <mat-form-field>
-          <input #recipeUrl matInput>
-        </mat-form-field>
-        <button mat-raised-button (click)="add(recipeUrl.value); recipeUrl.value=''">Dodaj przepis</button>
-      </div>
+      Szukaj przepisu po składnikach lub nazwie dania...
+    </div>
+    <div class="input-div">
+      <mat-form-field class="chip-list">
+        <mat-chip-list #chipList>
+          <mat-chip *ngFor="let searchTerm of searchTerms" [selectable]="true"
+                    [removable]="true" (removed)="removeSearchTerm(searchTerm)">
+            {{searchTerm}}
+            <mat-icon matChipRemove>cancel</mat-icon>
+          </mat-chip>
+        </mat-chip-list>
+        <input placeholder="jajka, spaghetti..."
+               [matChipInputFor]="chipList"
+               [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+               [matChipInputAddOnBlur]="false"
+               (matChipInputTokenEnd)="addSearchTerm($event)">
+      </mat-form-field>
+
+      <button id="search-recipe-btn" mat-raised-button (click)="search()">Szukaj</button>
+    </div>
+  </div>
+
+  <div class="add-new-recipe">
+    <div>Wklej adres www strony z przepisem:</div>
+    <div class="input-div">
+      <mat-form-field>
+        <input #recipeUrl matInput>
+      </mat-form-field>
+      <button id="add-recipe-btn" mat-raised-button (click)="add(recipeUrl.value); recipeUrl.value=''">Dodaj przepis</button>
     </div>
   </div>
 
@@ -18,7 +38,6 @@
                  [length]="recipesLength"
                  [pageSize]="pageSize"
                  [pageSizeOptions]="[12, 24, 36]"
-                 [showFirstLastButtons]="true"
                  (page)="changeListTop($event)"
                  class="top-paginator">
   </mat-paginator>
@@ -39,7 +58,6 @@
                  [length]="recipesLength"
                  [pageSize]="pageSize"
                  [pageSizeOptions]="[12, 24, 36]"
-                 [showFirstLastButtons]="true"
                  (page)="changeListBottom($event)"
                  class="bottom-paginator">
   </mat-paginator>
