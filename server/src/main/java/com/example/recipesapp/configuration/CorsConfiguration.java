@@ -1,7 +1,5 @@
-package com.example.recipesapp;
+package com.example.recipesapp.configuration;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -10,14 +8,16 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-//@SpringBootApplication
 @Configuration
-@EnableAutoConfiguration
-@ComponentScan
-@EnableWebMvc
-public class RecipesAppApplication {
+public class CorsConfiguration {
 
-    public static void main(String[] args) {
-        SpringApplication.run(RecipesAppApplication.class, args);
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurerAdapter() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**").allowedOrigins("http://localhost:4200");
+            }
+        };
     }
 }

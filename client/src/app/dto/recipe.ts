@@ -2,11 +2,16 @@ export class Recipe {
   id: number;
   title: string;
   ingredients: string[];
+  url: string;
+  image: string;
+  description: string;
+  instructions: string[];
+  categories: string[];
 
-  constructor(id: number, title: string, ingredients: string[]) {
-    this.id = id;
+
+  constructor(title: string, url: string) {
     this.title = title;
-    this.ingredients = ingredients;
+    this.url = url;
   }
 
   public toString = (): string => {

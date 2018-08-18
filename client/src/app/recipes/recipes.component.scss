@@ -1,0 +1,38 @@
+.recipe-card {
+  height: 280px;
+  margin-bottom: 5%;
+
+  .mat-card-image {
+    height: 210px;
+  }
+
+  .recipe-title {
+    margin-bottom: 0;
+  }
+
+  mat-card-content {
+    font-size: 1.5rem;
+    font-family: Raleway, sans-serif;
+  }
+}
+
+.add-new-recipe {
+  //display: flex;
+  margin-bottom: 1rem;
+
+  & > div:first-child {
+    width: 100%;
+  }
+
+  mat-form-field {
+    width: 53%;
+  }
+
+  button {
+    width: 45%;
+  }
+}
+
+.top-paginator {
+  margin-bottom: 0.8rem;
+}

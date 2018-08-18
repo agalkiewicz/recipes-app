@@ -1,0 +1,16 @@
+<div class="container">
+  <div *ngIf="recipe">
+    <h2><a [href]="recipe.url">{{ recipe.title }}</a></h2>
+    <div class="recipe-description">{{ recipe.description }}</div>
+
+    <h4>Składniki</h4>
+    <ul>
+      <li *ngFor="let ingredient of recipe.ingredients">{{ ingredient }}</li>
+    </ul>
+
+    <h4>Instrukcje</h4>
+    <ol>
+      <li *ngFor="let instruction of recipe.instructions">{{ instruction }}</li>
+    </ol>
+  </div>
+</div>
