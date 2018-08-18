@@ -106,15 +106,15 @@ export class RecipesComponent implements OnInit {
 
   search() {
     console.log('search', this.searchTerms);
-    this.searchTerms = [];
 
     this.recipeService.searchByTerms(this.searchTerms)
       .subscribe(recipes => {
-        console.log('recipes', this.recipes);
+        console.log('Znalezione przepisy:', this.recipes);
 
         this.recipes = recipes;
         this.recipesLength = this.recipes.length;
         this.pagedRecipes = this.recipes.slice(0, this.pageSize);
-      })
+      });
+    this.searchTerms = [];
   }
 }
