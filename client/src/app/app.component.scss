@@ -2,7 +2,10 @@
 
 mat-toolbar {
   background-color: $purple-dark;
-  height: 70px;
+  height: 100px;
+  position: fixed;
+  top: 0;
+  z-index: 2;
 }
 
 a.logo {
