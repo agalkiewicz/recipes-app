@@ -9,6 +9,8 @@ import com.google.gson.GsonBuilder;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.safety.Cleaner;
+import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +36,17 @@ public class HtmlAnalysisService {
             url = "http://" + url;
         }
 
-        Document document = Jsoup.connect(url).get();
+        Document document = Jsoup.connect(url).timeout(6000).get();
+
+        System.out.println(document);
+
+//        logger.info("document before: " + document);
+//
+//        Cleaner cleaner = new Cleaner(Whitelist.basicWithImages());
+//        document = cleaner.clean(document);
+//
+//        logger.info("document after: " + document);
+
         Recipe recipe = null;
 
         try {
@@ -58,6 +70,8 @@ public class HtmlAnalysisService {
 
     private Recipe analyseJson(Document document) {
         Elements scriptElements = document.select("script[type=\"application/ld+json\"]");
+
+        System.out.println(scriptElements);
 
         final GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(Recipe.class, new RecipeAdapter());
