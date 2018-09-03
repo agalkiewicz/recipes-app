@@ -1,3 +1,13 @@
-<div #googleSignIn class="google-sign-in">Zaloguj się przez Google</div>
+<div class="container">
+  <div #googleSignIn class="google-sign-in" (click)="signIn()">
+    <img src="../assets/images/g-logo.png">
+    <span>Zaloguj się przez Google</span>
+  </div>
+</div>
 
-<button (click)="googleSignOut()" class="google-sign-out">Wyloguj się</button>
+<div>
+  {{ user ? user.email : '' }}
+</div>
+
+<!--<button (click)="googleSignOut()" class="google-sign-out">Wyloguj się</button>-->
+<!--<button (click)="silentSignIn()">Zaloguj się cicho</button>-->
