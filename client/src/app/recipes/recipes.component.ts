@@ -3,8 +3,9 @@ import {Recipe} from '../dto/recipe';
 import {RecipeUrlDto} from '../dto/recipe-url-dto';
 import {RecipeService} from '../recipe.service';
 import {MatPaginator, PageEvent} from '@angular/material';
-import {SignInComponent} from "../sign-in/sign-in.component";
 import {SignInService} from "../service/sign-in.service";
+import {MatChipInputEvent, MatPaginator, PageEvent} from '@angular/material';
+import {COMMA, ENTER} from "@angular/cdk/keycodes";
 
 @Component({
   selector: 'app-recipes',
@@ -17,12 +18,15 @@ export class RecipesComponent implements OnInit {
 
   recipesLength = 0;
   pageSize = 12;
-
   @ViewChild('bottomPaginator') bottomPaginator: MatPaginator;
   @ViewChild('topPaginator') topPaginator: MatPaginator;
 
+  readonly separatorKeysCodes: number[] = [COMMA, ENTER];
+  searchTerms: string[];
+
   constructor(private recipeService: RecipeService,
               private signInService: SignInService) {
+    this.searchTerms = [];
   }
 
   ngOnInit() {
@@ -74,5 +78,46 @@ export class RecipesComponent implements OnInit {
   private changeList(event: PageEvent) {
     this.pagedRecipes = this.recipes.slice(event.pageIndex * event.pageSize, event.pageIndex * event.pageSize + event.pageSize);
     this.recipesLength = event.length;
+  }
+
+  addSearchTerm(event: MatChipInputEvent): void {
+    console.log('addSearchTerm');
+    console.log(event);
+
+    const input = event.input;
+    const value = event.value;
+
+    if ((value || '').trim()) {
+      this.searchTerms.push(value.trim());
+    }
+
+    if (input) {
+      input.value = '';
+    }
+  }
+
+  removeSearchTerm(searchTerm: string): void {
+    console.log('removeSearchTerm');
+    console.log(searchTerm);
+
+    const index = this.searchTerms.indexOf(searchTerm);
+
+    if (index >= 0) {
+      this.searchTerms.splice(index, 1);
+    }
+  }
+
+  search() {
+    console.log('search', this.searchTerms);
+
+    this.recipeService.searchByTerms(this.searchTerms)
+      .subscribe(recipes => {
+        console.log('Znalezione przepisy:', this.recipes);
+
+        this.recipes = recipes;
+        this.recipesLength = this.recipes.length;
+        this.pagedRecipes = this.recipes.slice(0, this.pageSize);
+      });
+    this.searchTerms = [];
   }
 }

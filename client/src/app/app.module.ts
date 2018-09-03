@@ -5,20 +5,23 @@ import {MatCardModule} from '@angular/material/card';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {
   MatFormFieldModule, MatPaginatorIntl, MatPaginatorModule, MatTableModule,
-  MatToolbarModule
+  MatToolbarModule, MatButtonModule, MatChipsModule, MatIconModule, MatInputModule,
+  MatSnackBar, MatSnackBarModule
 } from '@angular/material';
 
 import {AppComponent} from './app.component';
 import {RecipeService} from './recipe.service';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {RecipesComponent} from './recipes/recipes.component';
 import {MessagesComponent} from './messages/messages.component';
 import {MessageService} from './message.service';
 import {RecipeComponent} from './recipe/recipe.component';
+import {SignInService} from "./service/sign-in.service";
+import {MatPaginatorIntlPL} from './mat-paginator-intl-pl';
 import {AppRoutingModule} from './app-routing.module';
 import {SignInComponent} from './sign-in/sign-in.component';
-import {MatPaginatorIntlPL} from './mat-paginator-intl-pl';
-import {SignInService} from "./service/sign-in.service";
+import {Interceptor} from "./_interceptor/interceptor";
+import {Router} from "@angular/router";
 
 @NgModule({
   declarations: [
@@ -38,7 +41,13 @@ import {SignInService} from "./service/sign-in.service";
     MatTableModule,
     AppRoutingModule,
     MatToolbarModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatInputModule,
+    AppRoutingModule,
+    MatChipsModule,
+    MatIconModule,
+    MatSnackBarModule,
+    MatButtonModule
   ],
   providers: [
     RecipeService,
@@ -47,7 +56,16 @@ import {SignInService} from "./service/sign-in.service";
       provide: MatPaginatorIntl,
       useClass: MatPaginatorIntlPL
     },
-    SignInService
+    SignInService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: Interceptor,
+      multi: true,
+      deps: [
+        Router,
+        MatSnackBar
+      ]
+    }
   ],
   bootstrap: [AppComponent]
 })

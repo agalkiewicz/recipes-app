@@ -27,10 +27,14 @@ public class RecipeController {
 
     private final RecipeRepository recipeRepository;
 
+    private final RecipeDAO recipeDAO;
+
     public RecipeController(HtmlAnalysisService htmlAnalysisService,
-                            RecipeRepository recipeRepository) {
+                            RecipeRepository recipeRepository,
+                            RecipeDAO recipeDAO) {
         this.htmlAnalysisService = htmlAnalysisService;
         this.recipeRepository = recipeRepository;
+        this.recipeDAO = recipeDAO;
     }
 
     @GetMapping
@@ -83,6 +87,26 @@ public class RecipeController {
         } catch (NullPointerException e) {
             logger.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<RecipeDTO>> findByTerms(@RequestParam(value = "terms", required = true) List<String> terms) {
+        try {
+            String termsString = String.join(", ", terms);
+            recipeDAO.getRecipeByIngredients(termsString);
+
+            List<RecipeDTO> recipeDTOList = new ArrayList<>();
+//            for (Recipe recipe : recipes) {
+//                recipeDTOList.add(new RecipeDTO(recipe));
+//            }
+
+            logger.info("Get recipes by terms: {}", recipeDTOList);
+
+            return new ResponseEntity<>(recipeDTOList, HttpStatus.OK);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
