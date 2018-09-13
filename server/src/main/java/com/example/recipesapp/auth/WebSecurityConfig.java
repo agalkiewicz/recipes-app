@@ -48,37 +48,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-//        http.csrf().disable()
-//                .httpBasic().disable()
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//
-//        http
-//                .authorizeRequests()
-//                .antMatchers(HttpMethod.POST, "/sign-in").permitAll();
-//        http.antMatcher("/api/**").authorizeRequests() //
-//                .anyRequest().authenticated() //
-//                .and()
-//                .addFilter(new AuthorizationFilter(authenticationManager()));
+        http.csrf().disable()
+                .httpBasic().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        // Disable CSRF (cross site request forgery)
-
-//        http.csrf().disable().authorizeRequests()
-//                .antMatchers(HttpMethod.POST, "/sign-in").permitAll()
-//                .antMatchers("/api/**").permitAll()
-//                .anyRequest().authenticated();
-//
-//        http.csrf().disable();
-//
-//        http.httpBasic()
-//                .disable();
-
-// No session will be created or used by spring security
-//        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-// Entry points
         http.authorizeRequests()//
                 .antMatchers("/sign-in").permitAll()
-                // Disallow everything else..
                 .anyRequest().authenticated();
 
         http.antMatcher("/api/**").authorizeRequests()
@@ -86,35 +61,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterAfter(new AuthorizationFilter(), BasicAuthenticationFilter.class);
 
         http.cors();
-
-//        http.authorizeRequests()
-//                .antMatchers(HttpMethod.POST, "/sign-in").permitAll()
-//                .antMatchers("/api/**").permitAll()
-//                .anyRequest().authenticated();
-//
-//        http.cors().and()
-//                .addFilterAfter(new AuthorizationFilter(), FilterSecurityInterceptor.class);
-//
-//        http.csrf().disable()
-//                .httpBasic().disable()
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and().headers().frameOptions().disable()
-//                .and().anonymous().disable();
-
-//        http.csrf().disable().authorizeRequests()
-//                .antMatchers(HttpMethod.POST, "/sign-in").permitAll()
-//                .antMatchers("/api/**").permitAll()
-//                .antMatchers("/").permitAll()
-//                .anyRequest().authenticated();
     }
-
-//    @Bean
-//    public FilterRegistrationBean restRegistrationBean() {
-//        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
-//        filterRegistrationBean.setFilter(restFilter);
-//        filterRegistrationBean.setUrlPatterns(Collections.singletonList("/rest/*"));
-//        return filterRegistrationBean;
-//    }
 
     @Override
     public void configure(AuthenticationManagerBuilder builder)

@@ -26,18 +26,7 @@ import org.springframework.web.filter.GenericFilterBean;
 @Component
 public class AuthorizationFilter implements Filter {
 
-    //    @Autowired
     private IdTokenVerifier idTokenVerifier;
-
-//    AuthorizationFilter(AuthenticationManager authManager) {
-//
-//        super(authManager);
-//    }
-
-//    @Autowired
-//    public AuthorizationFilter(IdTokenVerifier idTokenVerifier) {
-//        this.idTokenVerifier = idTokenVerifier;
-//    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -52,10 +41,14 @@ public class AuthorizationFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
+//        if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null && SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+//            System.out.println("SecurityContextHolder.getContext().getAuthentication().getName(): " + SecurityContextHolder.getContext().getAuthentication().getName());
+//        }
+
         String idToken = request.getHeader("Authorization");
 
         if (idToken == null || !idToken.startsWith("Bearer")) {
-            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         }
 
         idToken = idToken.replace("Bearer ", "");
@@ -63,14 +56,11 @@ public class AuthorizationFilter implements Filter {
         try {
             payload = this.idTokenVerifier.verifyToken(idToken);
             if (payload != null) {
-                System.out.println("payload");
-                System.out.println(payload);
                 String username = payload.getSubject();
-                SecurityContextHolder.getContext().getAuthentication(). setAuthentication(new UsernamePasswordAuthenticationToken(username, ""));
-//                filterChain.doFilter(request, response);
+                SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username, ""));
             }
         } catch (GeneralSecurityException | InvalidTokenException e) {
-            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         }
         filterChain.doFilter(request, response);
     }
