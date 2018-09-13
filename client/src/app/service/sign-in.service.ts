@@ -4,6 +4,8 @@ import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Observable} from "rxjs/Observable";
 import {SignInProvider} from "../dto/sign-in-provider";
 import {GoogleSignInProvider} from "../google-sign-in-provider";
+import {HttpClient} from "@angular/common/http";
+import {Recipe} from "../dto/recipe";
 
 @Injectable()
 export class SignInService {
@@ -15,7 +17,7 @@ export class SignInService {
     return this.authenticationState.asObservable();
   }
 
-  constructor() {
+  constructor(private http: HttpClient) {
     this.provider = new GoogleSignInProvider();
     this.provider.initialize().then((user: User) => {
       this.user = user;
@@ -49,4 +51,11 @@ export class SignInService {
     });
   }
 
+  sendIdToken(idToken: string) {
+    console.log('send id token');
+    let signInUrl = 'http://localhost:8080/sign-in';
+    return this.http.post<Recipe>(signInUrl, {
+      "idToken": idToken
+    });
+  }
 }

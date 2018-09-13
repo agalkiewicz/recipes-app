@@ -2,7 +2,6 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {Recipe} from '../dto/recipe';
 import {RecipeUrlDto} from '../dto/recipe-url-dto';
 import {RecipeService} from '../recipe.service';
-import {MatPaginator, PageEvent} from '@angular/material';
 import {SignInService} from "../service/sign-in.service";
 import {MatChipInputEvent, MatPaginator, PageEvent} from '@angular/material';
 import {COMMA, ENTER} from "@angular/cdk/keycodes";
@@ -55,6 +54,8 @@ export class RecipesComponent implements OnInit {
   private getAll(): void {
     this.recipeService.getAll()
       .subscribe(recipes => {
+        console.log('get all recipes');
+        console.log(recipes);
         this.recipes = recipes;
         this.recipesLength = this.recipes.length;
         this.pagedRecipes = this.recipes.slice(0, this.pageSize);

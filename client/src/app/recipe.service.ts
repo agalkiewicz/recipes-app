@@ -7,7 +7,7 @@ import {Recipe} from './dto/recipe';
 @Injectable()
 export class RecipeService {
 
-  private recipesUrl = 'http://localhost:8080/recipes';
+  private recipesUrl = 'http://localhost:8080/api/recipes';
 
   constructor(private http: HttpClient) {
   }

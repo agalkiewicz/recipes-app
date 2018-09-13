@@ -1,5 +1,6 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {GoogleSignIn} from "../globals";
+import {SignInService} from "./service/sign-in.service";
+import {User} from "./dto/user";
 
 
 @Component({
@@ -9,18 +10,18 @@ import {GoogleSignIn} from "../globals";
 })
 export class AppComponent implements AfterViewInit {
   title = 'Aplikacja kulinarna';
-  private clientId = '680092708222-dv2se5gsv573lmas6saf6j4m7niee35b.apps.googleusercontent.com';
-  private scope = [
-    'profile',
-    'email'
-  ].join(' ');
+  user: User;
+
+  constructor(private signInService: SignInService) {}
 
   ngAfterViewInit() {
-    // GoogleSignIn.gapi.load('auth2', () => {
-    //   GoogleSignIn.auth2 = GoogleSignIn.gapi.auth2.init({
-    //     client_id: this.clientId,
-    //     scope: this.scope
-    //   });
-    // });
+    this.signInService.authState.subscribe((user: User) => {
+      this.user = user;
+      if (user) {
+        localStorage.setItem('id_token', user.idtoken);
+      }
+      console.log('user changed');
+      console.log(user);
+    });
   }
 }

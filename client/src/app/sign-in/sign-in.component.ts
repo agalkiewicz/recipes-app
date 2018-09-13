@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {SignInService} from "../service/sign-in.service";
 import {User} from "../dto/user";
+import {AppComponent} from "../app.component";
 
 declare const gapi: any;
 
@@ -9,7 +10,7 @@ declare const gapi: any;
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.scss']
 })
-export class SignInComponent implements AfterViewInit{
+export class SignInComponent {
 
   // @ViewChild('googleSignIn')
   // public googleSignIn: ElementRef;
@@ -23,15 +24,24 @@ export class SignInComponent implements AfterViewInit{
   // ].join(' ');
   //
 
-  user: User;
-
   constructor(private signInService: SignInService) {
   }
 
   signIn() {
     this.signInService.signIn().then(
-      (userData) => {
-        console.log("sign in data : ", userData);
+      (user: User) => {
+        console.log("sign in data : ", user);
+        this.signInService.sendIdToken(user.idtoken).subscribe(() => {
+          console.log('send id token subscribe');
+        });
+      }
+    );
+  }
+
+  signOut() {
+    this.signInService.signOut().then(
+      () => {
+        localStorage.removeItem('id_token');
       }
     );
   }
@@ -40,13 +50,13 @@ export class SignInComponent implements AfterViewInit{
 
   }
 
-  ngAfterViewInit() {
-    this.signInService.authState.subscribe((user: User) => {
-      this.user = user;
-      console.log('user changed');
-      console.log(user);
-    });
-  }
+  // ngAfterViewInit() {
+  //   this.signInService.authState.subscribe((user: User) => {
+  //     this.user = user;
+  //     console.log('user changed');
+  //     console.log(user);
+  //   });
+  // }
 
 
   //

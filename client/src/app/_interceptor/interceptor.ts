@@ -10,24 +10,37 @@ import {MatSnackBar} from '@angular/material';
 import {Observable} from "rxjs/Observable";
 import {catchError} from "rxjs/operators";
 import {of} from "rxjs/observable/of";
+import {SignInService} from "../service/sign-in.service";
+import {User} from "../dto/user";
 
 @Injectable()
 export class Interceptor implements HttpInterceptor {
+  private token: string;
 
   constructor(private router: Router,
               private snackBar: MatSnackBar) {
+    this.token = localStorage.getItem('id_token') ? localStorage.getItem('id_token') : null;
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (!request.headers.has('Content-Type')) {
-      request = request.clone({
-        headers: request.headers.set('Content-Type', 'application/json')
-      });
-    }
-
+    console.log('intercept');
+    console.log(request.headers.has('Authorization'));
+    console.log(this.token);
+    // if (!request.headers.has('Content-Type')) {
+    //   request = request.clone({
+    //     headers: request.headers.set('Content-Type', 'application/json')
+    //   });
+    // }
+    //
     if (!request.headers.has('Accept')) {
       request = request.clone({
         headers: request.headers.set('Accept', 'application/json')
+      });
+    }
+
+    if (!request.headers.has('Authorization') && this.token) {
+      request = request.clone({
+        headers: request.headers.set('Authorization', `Bearer ${this.token}`)
       });
     }
 
@@ -41,7 +54,7 @@ export class Interceptor implements HttpInterceptor {
 
   private handleError(err: HttpErrorResponse): Observable<any> {
     if (err.status === 409) {
-      const errorSnackbar = this.snackBar.open('Dodałeś już przepis z tej strony.', 'Zamknij', {
+      this.snackBar.open('Dodałeś już przepis z tej strony.', 'Zamknij', {
         duration: 7000
       });
     } else if (err.status === 500) {
@@ -50,7 +63,7 @@ export class Interceptor implements HttpInterceptor {
         window.location.reload();
       });
     } else if (err.status === 501) {
-      const errorSnackbar = this.snackBar.open('Nie można dodać przepisu z tej strony. Strona nie implementuje znaczników Schema.org.', 'Zamknij', {
+      this.snackBar.open('Nie można dodać przepisu z tej strony. Strona nie implementuje znaczników Schema.org.', 'Zamknij', {
         duration: 7000
       });
     }
