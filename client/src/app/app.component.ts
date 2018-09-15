@@ -11,8 +11,10 @@ import {User} from "./dto/user";
 export class AppComponent implements AfterViewInit {
   title = 'Aplikacja kulinarna';
   user: User;
+  isMenuVisible = false;
 
-  constructor(private signInService: SignInService) {}
+  constructor(private signInService: SignInService) {
+  }
 
   ngAfterViewInit() {
     this.signInService.authState.subscribe((user: User) => {
@@ -23,5 +25,13 @@ export class AppComponent implements AfterViewInit {
       console.log('user changed');
       console.log(user);
     });
+  }
+
+  public onActivate(componentToLoad) {
+    this.isMenuVisible = false;
+
+    if (localStorage.getItem('id_token')) {
+      this.isMenuVisible = true;
+    }
   }
 }

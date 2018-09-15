@@ -14,6 +14,7 @@ import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -23,14 +24,7 @@ public class HtmlAnalysisService {
 
     private static final Logger logger = LoggerFactory.getLogger(HtmlAnalysisService.class);
 
-    private final RecipeRepository recipeRepository;
-
-    public HtmlAnalysisService(RecipeRepository recipeRepository) {
-        this.recipeRepository = recipeRepository;
-    }
-
-
-    public RecipeDTO analyse(String url) throws IOException, ScopeNotFoundException {
+    public Recipe analyse(String url) throws IOException, ScopeNotFoundException {
 
         if (!(url.contains("http://") || url.contains("https://"))) {
             url = "http://" + url;
@@ -58,14 +52,12 @@ public class HtmlAnalysisService {
 
         if (recipe == null) {
             recipe = analyseHtml(document);
-            recipe.setUrl(url);
-            recipeRepository.save(recipe);
-        } else {
-            recipe.setUrl(url);
-            recipeRepository.save(recipe);
+
         }
 
-        return new RecipeDTO(recipe);
+        recipe.setUrl(url);
+
+        return recipe;
     }
 
     private Recipe analyseJson(Document document) {

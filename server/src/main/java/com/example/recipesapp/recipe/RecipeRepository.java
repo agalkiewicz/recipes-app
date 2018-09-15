@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     List<Recipe> findAllByOrderByIdDesc();
+
+    List<Recipe> findAllByUserIdOrderByIdDesc(String id);
 }

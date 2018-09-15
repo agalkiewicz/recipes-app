@@ -22,6 +22,8 @@ import {AppRoutingModule} from './app-routing.module';
 import {SignInComponent} from './sign-in/sign-in.component';
 import {Interceptor} from "./_interceptor/interceptor";
 import {Router} from "@angular/router";
+import {AuthGuard} from "./_guards/AuthGuard";
+import { NavbarComponent } from './navbar/navbar.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,8 @@ import {Router} from "@angular/router";
     RecipesComponent,
     MessagesComponent,
     RecipeComponent,
-    SignInComponent
+    SignInComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,
@@ -65,7 +68,8 @@ import {Router} from "@angular/router";
         Router,
         MatSnackBar
       ]
-    }
+    },
+    AuthGuard
   ],
   bootstrap: [AppComponent]
 })

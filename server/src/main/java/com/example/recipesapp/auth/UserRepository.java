@@ -8,4 +8,6 @@ import javax.transaction.Transactional;
 @Transactional
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
+
+    User findById(String id);
 }

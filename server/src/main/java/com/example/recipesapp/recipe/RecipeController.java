@@ -1,15 +1,17 @@
 package com.example.recipesapp.recipe;
 
+import com.example.recipesapp.auth.User;
+import com.example.recipesapp.auth.UserRepository;
 import com.example.recipesapp.dto.RecipeDTO;
 import com.example.recipesapp.dto.RecipeUrlDTO;
 import com.example.recipesapp.exceptions.ScopeNotFoundException;
 import com.example.recipesapp.htmlanalysis.HtmlAnalysisService;
-import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -27,20 +29,24 @@ public class RecipeController {
 
     private final RecipeRepository recipeRepository;
 
+    private final UserRepository userRepository;
+
     private final RecipeDAO recipeDAO;
 
     public RecipeController(HtmlAnalysisService htmlAnalysisService,
                             RecipeRepository recipeRepository,
-                            RecipeDAO recipeDAO) {
+                            UserRepository userRepository, RecipeDAO recipeDAO) {
         this.htmlAnalysisService = htmlAnalysisService;
         this.recipeRepository = recipeRepository;
+        this.userRepository = userRepository;
         this.recipeDAO = recipeDAO;
     }
 
     @GetMapping
     public ResponseEntity<List<RecipeDTO>> getAll() {
         try {
-            List<Recipe> recipes = recipeRepository.findAllByOrderByIdDesc();
+            String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+            List<Recipe> recipes = recipeRepository.findAllByUserIdOrderByIdDesc(userId);
 
             List<RecipeDTO> recipeDTOList = new ArrayList<>();
             for (Recipe recipe : recipes) {
@@ -58,10 +64,15 @@ public class RecipeController {
     @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity<RecipeDTO> add(@RequestBody RecipeUrlDTO recipeUrlDTO) {
         try {
-            RecipeDTO recipe = htmlAnalysisService.analyse(recipeUrlDTO.getUrl());
+            Recipe recipe = htmlAnalysisService.analyse(recipeUrlDTO.getUrl());
+            String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+            User user = this.userRepository.findById(userId);
+            recipe.setUser(user);
+            recipeRepository.save(recipe);
+
             logger.info("Hardly created recipe: {}", recipe.toString());
 
-            return new ResponseEntity<>(recipe, HttpStatus.CREATED);
+            return new ResponseEntity<>(new RecipeDTO(recipe), HttpStatus.CREATED);
         } catch (IOException e) {
             logger.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -80,7 +91,12 @@ public class RecipeController {
     @GetMapping("/{id}")
     public ResponseEntity<RecipeDTO> get(@PathVariable Long id) {
         try {
-            RecipeDTO recipe = new RecipeDTO(recipeRepository.findOne(id));
+            Recipe foundRecipe = recipeRepository.findOne(id);
+            String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+            if (!foundRecipe.getUser().getId().equals(userId)) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+            RecipeDTO recipe = new RecipeDTO(foundRecipe);
             logger.info("Get a recipe to the client app: {}", recipe.toString());
 
             return new ResponseEntity<>(recipe, HttpStatus.OK);

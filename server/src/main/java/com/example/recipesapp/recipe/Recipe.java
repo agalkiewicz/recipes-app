@@ -1,6 +1,9 @@
 package com.example.recipesapp.recipe;
 
-import com.example.recipesapp.dto.RecipeDTO;
+import com.example.recipesapp.auth.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -25,6 +28,12 @@ public class Recipe {
     private String instructions;
 
     private String categories;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    private User user;
 
     public Recipe() {
     }
@@ -95,6 +104,14 @@ public class Recipe {
 
     public void setCategories(String categories) {
         this.categories = categories;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
