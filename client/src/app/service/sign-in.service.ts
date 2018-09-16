@@ -6,6 +6,7 @@ import {SignInProvider} from "../dto/sign-in-provider";
 import {GoogleSignInProvider} from "../google-sign-in-provider";
 import {HttpClient} from "@angular/common/http";
 import {Recipe} from "../dto/recipe";
+import {Router} from "@angular/router";
 
 @Injectable()
 export class SignInService {
@@ -17,7 +18,8 @@ export class SignInService {
     return this.authenticationState.asObservable();
   }
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,
+              private router: Router) {
     this.provider = new GoogleSignInProvider();
     this.provider.initialize().then((user: User) => {
       this.user = user;
@@ -38,9 +40,12 @@ export class SignInService {
   }
 
   signOut(): Promise<any> {
+    console.log('sign out service');
     return new Promise((resolve, reject) => {
       if (this.user) {
         this.provider.signOut().then(() => {
+          console.log('sign out provider');
+          localStorage.removeItem('currentUser');
           this.user = null;
           this.authenticationState.next(null);
           resolve();
@@ -54,7 +59,7 @@ export class SignInService {
   sendIdToken(idToken: string) {
     console.log('send id token');
     let signInUrl = 'http://localhost:8080/sign-in';
-    return this.http.post<Recipe>(signInUrl, {
+    return this.http.post(signInUrl, {
       "idToken": idToken
     });
   }

@@ -6,7 +6,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {
   MatFormFieldModule, MatPaginatorIntl, MatPaginatorModule, MatTableModule,
   MatToolbarModule, MatButtonModule, MatChipsModule, MatIconModule, MatInputModule,
-  MatSnackBar, MatSnackBarModule
+  MatSnackBar, MatSnackBarModule, MatMenuModule
 } from '@angular/material';
 
 import {AppComponent} from './app.component';
@@ -50,7 +50,8 @@ import { NavbarComponent } from './navbar/navbar.component';
     MatChipsModule,
     MatIconModule,
     MatSnackBarModule,
-    MatButtonModule
+    MatButtonModule,
+    MatMenuModule
   ],
   providers: [
     RecipeService,

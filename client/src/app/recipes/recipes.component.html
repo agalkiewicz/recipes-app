@@ -42,11 +42,20 @@
                  class="top-paginator">
   </mat-paginator>
   <div fxLayout="row" fxLayout.xs="column" fxLayoutWrap fxLayoutGap="1%">
+    <div *ngIf="!pagedRecipes.length"
+         class="no-recipe">
+      Nie dodano jeszcze żadnych przepisów.
+    </div>
     <div *ngFor="let recipe of pagedRecipes" fxFlex="24%" fxFlex.sm="49%" fxFlex.md="32%">
       <a routerLink="/recipes/{{recipe.id}}">
         <mat-card class="recipe-card">
-          <img mat-card-image class="img-responsive"
+          <img *ngIf="recipe.image"
+               mat-card-image class="img-responsive"
                [src]="recipe.image">
+          <div *ngIf="!recipe.image" mat-card-image
+               class="no-image">
+            <span>Brak zdjęcia</span>
+          </div>
           <mat-card-content>
             <h5 class="recipe-title">{{recipe.title}}</h5>
           </mat-card-content>

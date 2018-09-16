@@ -2,6 +2,8 @@ import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/
 import {SignInService} from "../service/sign-in.service";
 import {User} from "../dto/user";
 import {AppComponent} from "../app.component";
+import {Router} from "@angular/router";
+import {AuthGuard} from "../_guards/AuthGuard";
 
 declare const gapi: any;
 
@@ -24,26 +26,19 @@ export class SignInComponent {
   // ].join(' ');
   //
 
-  constructor(private signInService: SignInService) {
+  constructor(private signInService: SignInService,
+              private router: Router) {
   }
 
   signIn() {
-    this.signInService.signIn().then(
-      (user: User) => {
-        console.log("sign in data : ", user);
-        this.signInService.sendIdToken(user.idtoken).subscribe(() => {
-          console.log('send id token subscribe');
-        });
-      }
-    );
-  }
-
-  signOut() {
-    this.signInService.signOut().then(
-      () => {
-        localStorage.removeItem('id_token');
-      }
-    );
+    this.signInService.signIn().then((user: User) => {
+      console.log("sign in data : ", user);
+      this.signInService.sendIdToken(user.idToken).subscribe(() => {
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        this.router.navigate(['/recipes']);
+        console.log('send id token subscribe');
+      });
+    });
   }
 
   ngOnInit() {

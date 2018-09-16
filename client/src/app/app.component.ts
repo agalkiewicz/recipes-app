@@ -19,8 +19,10 @@ export class AppComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.signInService.authState.subscribe((user: User) => {
       this.user = user;
-      if (user) {
-        localStorage.setItem('id_token', user.idtoken);
+      if (user && user.idToken && localStorage.getItem('currentUser')) {
+        let currentUser: User = JSON.parse(localStorage.getItem('currentUser'));
+        currentUser.idToken = user.idToken;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
       }
       console.log('user changed');
       console.log(user);
@@ -30,7 +32,7 @@ export class AppComponent implements AfterViewInit {
   public onActivate(componentToLoad) {
     this.isMenuVisible = false;
 
-    if (localStorage.getItem('id_token')) {
+    if (localStorage.getItem('currentUser') && JSON.parse(localStorage.getItem('currentUser')).idToken) {
       this.isMenuVisible = true;
     }
   }

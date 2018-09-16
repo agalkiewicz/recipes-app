@@ -12,6 +12,7 @@ import {catchError} from "rxjs/operators";
 import {of} from "rxjs/observable/of";
 import {SignInService} from "../service/sign-in.service";
 import {User} from "../dto/user";
+import {current} from "codelyzer/util/syntaxKind";
 
 @Injectable()
 export class Interceptor implements HttpInterceptor {
@@ -19,19 +20,23 @@ export class Interceptor implements HttpInterceptor {
 
   constructor(private router: Router,
               private snackBar: MatSnackBar) {
-    this.token = localStorage.getItem('id_token') ? localStorage.getItem('id_token') : null;
+    if (localStorage.getItem('currentUser')) {
+      const currentUser: User = JSON.parse(localStorage.getItem('currentUser'));
+      if (currentUser.idToken) {
+        this.token = currentUser.idToken;
+      } else {
+        this.token = null;
+      }
+    } else {
+      this.token = null;
+    }
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     console.log('intercept');
     console.log(request.headers.has('Authorization'));
     console.log(this.token);
-    // if (!request.headers.has('Content-Type')) {
-    //   request = request.clone({
-    //     headers: request.headers.set('Content-Type', 'application/json')
-    //   });
-    // }
-    //
+
     if (!request.headers.has('Accept')) {
       request = request.clone({
         headers: request.headers.set('Accept', 'application/json')

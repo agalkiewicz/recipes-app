@@ -36,7 +36,7 @@ export class GoogleSignInProvider implements SignInProvider {
     user.name = profile.getName();
     user.email = profile.getEmail();
     user.imageUrl = profile.getImageUrl();
-    user.idtoken = authResponseObj.id_token;
+    user.idToken = authResponseObj.id_token;
     return user;
   }
 
