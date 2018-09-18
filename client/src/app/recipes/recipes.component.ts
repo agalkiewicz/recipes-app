@@ -12,8 +12,8 @@ import {COMMA, ENTER} from "@angular/cdk/keycodes";
   styleUrls: ['./recipes.component.scss']
 })
 export class RecipesComponent implements OnInit {
-  recipes: Recipe[];
-  pagedRecipes: Recipe[];
+  recipes: Recipe[] = [];
+  pagedRecipes: Recipe[] = [];
 
   recipesLength = 0;
   pageSize = 12;

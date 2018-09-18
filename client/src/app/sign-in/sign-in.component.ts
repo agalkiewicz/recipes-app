@@ -14,18 +14,6 @@ declare const gapi: any;
 })
 export class SignInComponent {
 
-  // @ViewChild('googleSignIn')
-  // public googleSignIn: ElementRef;
-  //
-  // public auth2: any;
-  // private idToken: string;
-  // private clientId = '680092708222-dv2se5gsv573lmas6saf6j4m7niee35b.apps.googleusercontent.com';
-  // private scope = [
-  //   'profile',
-  //   'email'
-  // ].join(' ');
-  //
-
   constructor(private signInService: SignInService,
               private router: Router) {
   }

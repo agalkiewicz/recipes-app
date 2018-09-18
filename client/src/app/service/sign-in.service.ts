@@ -5,7 +5,6 @@ import {Observable} from "rxjs/Observable";
 import {SignInProvider} from "../dto/sign-in-provider";
 import {GoogleSignInProvider} from "../google-sign-in-provider";
 import {HttpClient} from "@angular/common/http";
-import {Recipe} from "../dto/recipe";
 import {Router} from "@angular/router";
 
 @Injectable()
