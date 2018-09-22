@@ -1,16 +1,27 @@
 <div class="container">
   <div *ngIf="recipe">
-    <h2><a [href]="recipe.url">{{ recipe.title }}</a></h2>
+    <div>
+      <small class="breadcrumb">
+        <a routerLink="/recipes">< powrót do listy przepisów</a>
+      </small>
+    </div>
+    <h2 class="title">{{ recipe.title }}</h2>
+    <a [href]="recipe.url"
+       target="_blank"
+       class="url">link do strony</a>
     <div class="recipe-description">{{ recipe.description }}</div>
 
     <h4>Składniki</h4>
     <ul>
-      <li *ngFor="let ingredient of recipe.ingredients">{{ ingredient }}</li>
+      <li *ngFor="let ingredient of recipe.ingredients" class="ingredient">{{ ingredient }}</li>
     </ul>
 
     <h4>Instrukcje</h4>
     <ol>
-      <li *ngFor="let instruction of recipe.instructions">{{ instruction }}</li>
+      <li *ngFor="let instruction of recipe.instructions"
+          class="instruction"
+          [ngClass]="recipe.instructions.length === 1 ? 'no-style' : ''">{{ instruction }}
+      </li>
     </ol>
   </div>
 </div>

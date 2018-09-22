@@ -18,10 +18,10 @@ public class PgFullTextSearchFunction implements SQLFunction {
     public String render(Type type, List args, SessionFactoryImplementor sessionFactoryImplementor) throws QueryException {
         if (args.size() < 2) {
             throw new IllegalArgumentException(
-                    "The function must be passed 2 arguments");
+                    "The function has 2 arguments.");
         }
 
-        String field = (String) args.get(0);
+        String column = (String) args.get(0);
         String value = (String) args.get(1);
 
         String[] valuesArray = value
@@ -40,10 +40,13 @@ public class PgFullTextSearchFunction implements SQLFunction {
         }
         query += ")'";
 
-        String fragment = field + " @@ ";
-        fragment += "to_tsquery('polish', " + query + ")";
+        if (column.equals("title")) {
+            column += "to_tsvector(title)";
+        }
 
-        return fragment;
+        return column + " @@ to_tsquery('polish', " + query + ")";
+
+//        return fragment;
 
     }
 

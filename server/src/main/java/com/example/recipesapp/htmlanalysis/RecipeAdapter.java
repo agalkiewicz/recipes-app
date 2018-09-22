@@ -158,6 +158,13 @@ public class RecipeAdapter extends TypeAdapter {
                     }
                     next = readString(jsonReader);
                     break;
+                case "url":
+                    if (jsonReader.peek() != JsonToken.STRING) {
+                        jsonReader.skipValue();
+                        break;
+                    }
+                    next = readString(jsonReader);
+                    break;
                 default:
                     jsonReader.skipValue();
                     break;

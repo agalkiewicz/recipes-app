@@ -1,9 +1,9 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {Recipe} from '../dto/recipe';
 import {RecipeUrlDto} from '../dto/recipe-url-dto';
 import {RecipeService} from '../recipe.service';
 import {SignInService} from "../service/sign-in.service";
-import {MatChipInputEvent, MatPaginator, PageEvent} from '@angular/material';
+import {MatChipInputEvent, MatPaginator, MatSnackBar, PageEvent} from '@angular/material';
 import {COMMA, ENTER} from "@angular/cdk/keycodes";
 
 @Component({
@@ -11,7 +11,7 @@ import {COMMA, ENTER} from "@angular/cdk/keycodes";
   templateUrl: './recipes.component.html',
   styleUrls: ['./recipes.component.scss']
 })
-export class RecipesComponent implements OnInit {
+export class RecipesComponent implements OnInit, AfterViewInit {
   recipes: Recipe[] = [];
   pagedRecipes: Recipe[] = [];
 
@@ -26,11 +26,15 @@ export class RecipesComponent implements OnInit {
   noRecipesInfo = 'Nie dodano jeszcze żadnych przepisów.';
 
   constructor(private recipeService: RecipeService,
-              private signInService: SignInService) {
+              private snackBar: MatSnackBar) {
     this.searchTerms = [];
   }
 
   ngOnInit() {
+
+  }
+
+  ngAfterViewInit() {
     this.getAll();
   }
 
@@ -49,6 +53,10 @@ export class RecipesComponent implements OnInit {
           pageEvent.pageSize = this.topPaginator.pageSize;
           this.changeList(pageEvent);
         }
+
+        this.snackBar.open('Pomyślnie dodano nowy przepis.', 'Zamknij', {
+          duration: 3000
+        });
       });
   }
 
@@ -93,9 +101,7 @@ export class RecipesComponent implements OnInit {
     if (index >= 0) {
       this.searchTerms.splice(index, 1);
     }
-    if (this.searchTerms.length) {
-      this.searchRecipesByTerms();
-    } else {
+    if (!this.searchTerms.length) {
       this.getAllRecipes();
     }
   }

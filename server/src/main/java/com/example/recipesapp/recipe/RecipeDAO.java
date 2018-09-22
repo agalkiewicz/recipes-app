@@ -20,8 +20,8 @@ public class RecipeDAO {
     }
 
     public List<Recipe> getRecipeByIngredients(String ingredients, String userId) {
-        TypedQuery<Recipe> query = entityManager.createQuery("SELECT r FROM Recipe r WHERE r.user.id = :userId AND fts(ingredients_tokens, '" + ingredients + "') = true ORDER BY id DESC ", Recipe.class);
-        query.setParameter("userId", userId);
+        TypedQuery<Recipe> query = entityManager.createQuery("SELECT r FROM Recipe r WHERE ((r.user.id = '" + userId + "') AND (fts(ingredients_tokens, '" + ingredients + "') = true OR fts(title, '" + ingredients + "') = true)) ORDER BY r.id DESC ", Recipe.class);
+//        query.setParameter("userId", userId);
         List<Recipe> result = query.getResultList();
 
         return result;

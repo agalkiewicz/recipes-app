@@ -17,10 +17,15 @@ body {
 
 a {
   text-decoration: none;
+  color: $link-color;
+
+  &:link, &:visited, &:hover, &active {
+    color: $link-color;
+  }
 }
 
 .mat-raised-button {
-  background-color: $green-accent;
+  background-color: $accent;
 }
 
 button {

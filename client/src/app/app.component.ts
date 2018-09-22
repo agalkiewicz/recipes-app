@@ -8,7 +8,7 @@ import {User} from "./dto/user";
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements AfterViewInit, OnInit {
   title = 'Aplikacja kulinarna';
   user: User;
   isMenuVisible = false;
@@ -16,7 +16,7 @@ export class AppComponent implements AfterViewInit {
   constructor(private signInService: SignInService) {
   }
 
-  ngAfterViewInit() {
+  ngOnInit() {
     this.signInService.authState.subscribe((user: User) => {
       this.user = user;
       if (user && user.idToken && localStorage.getItem('currentUser')) {
@@ -27,6 +27,10 @@ export class AppComponent implements AfterViewInit {
       console.log('user changed');
       console.log(user);
     });
+  }
+
+  ngAfterViewInit() {
+
   }
 
   public onActivate(componentToLoad) {

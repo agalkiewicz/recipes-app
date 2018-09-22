@@ -1,4 +1,33 @@
+@import "src/variables.scss";
+
 .recipe-description {
   color: rgba(0,0,0,.5);
-  font-size: .9rem;
+  font-size: .95rem;
+}
+
+.ingredient {
+  line-height: 2rem;
+}
+
+.instruction {
+  line-height: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+li.no-style {
+  list-style-type: none;
+}
+
+.url {
+  color: $primary-accent;
+  margin-left: 10px;
+}
+
+.title {
+  display: inline-block;
+}
+
+.breadcrumb {
+  text-transform: uppercase;
+  font-size: 12px;
 }
