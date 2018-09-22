@@ -51,19 +51,34 @@ public class RecipeAdapter extends TypeAdapter {
                     recipe.setTitle(readString(jsonReader));
                     break;
                 case "image":
-                    recipe.setImage(readString(jsonReader));
+                    String image = "";
+                    if (jsonReader.peek() == JsonToken.STRING) {
+                        image = readString(jsonReader);
+                    } else if (jsonReader.peek() == JsonToken.BEGIN_ARRAY) {
+                        jsonReader.beginArray();
+                        if (jsonReader.peek() == JsonToken.STRING) {
+                            image = readString(jsonReader);
+                        } else if (jsonReader.peek() == JsonToken.BEGIN_OBJECT) {
+                            image = readObject(jsonReader);
+                        }
+                        while (jsonReader.peek() != JsonToken.END_ARRAY) {
+                            jsonReader.skipValue();
+                        }
+                        jsonReader.endArray();
+                    }
+                    recipe.setImage(image);
                     break;
                 case "description":
                     recipe.setDescription(readString(jsonReader));
                     break;
                 case "recipeInstructions":
-                    recipe.setInstructions(readArray(jsonReader));
+                    recipe.setInstructions(readStringOrArray(jsonReader));
                     break;
                 case "recipeIngredient":
-                    recipe.setIngredients(readArray(jsonReader));
+                    recipe.setIngredients(readStringOrArray(jsonReader));
                     break;
                 case "recipeCategory":
-                    recipe.setCategories(readArray(jsonReader));
+                    recipe.setCategories(readStringOrArray(jsonReader));
                     break;
                 default:
                     jsonReader.skipValue();
@@ -78,40 +93,87 @@ public class RecipeAdapter extends TypeAdapter {
     }
 
     private String readArray(JsonReader jsonReader) throws IOException {
-        String specialCharacters = "[\\n\\r\\t]";
         StringBuilder stringBuilder = new StringBuilder();
-        String next = null;
+        String next = "";
 
-        if (jsonReader.peek() != JsonToken.BEGIN_ARRAY && jsonReader.peek() != JsonToken.STRING) {
+        if (jsonReader.peek() != JsonToken.BEGIN_ARRAY && jsonReader.peek() != JsonToken.BEGIN_OBJECT) {
             jsonReader.skipValue();
             return null;
         }
         if (jsonReader.peek() == JsonToken.BEGIN_ARRAY) {
             jsonReader.beginArray();
-            if (jsonReader.peek() != JsonToken.STRING) {
-                jsonReader.skipValue();
-                return null;
-            }
-            while (jsonReader.hasNext()) {
-                next = Jsoup.parse(jsonReader.nextString()).text();
-                next = next.replaceAll(specialCharacters, "");
-                stringBuilder.append(next).append("@");
+            if (jsonReader.peek() == JsonToken.STRING) {
+                while (jsonReader.hasNext()) {
+                    next = readString(jsonReader);
+                    stringBuilder.append(next).append("@");
+                }
+            } else if (jsonReader.peek() == JsonToken.BEGIN_OBJECT) {
+                while (jsonReader.hasNext()) {
+                    next = readObject(jsonReader);
+                    stringBuilder.append(next).append("@");
+                }
             }
             jsonReader.endArray();
-        } else if (jsonReader.peek() == JsonToken.STRING) {
-            next = Jsoup.parse(jsonReader.nextString()).text();
-            next = next.replaceAll(specialCharacters, "");
-            stringBuilder.append(next);
         }
 
         return stringBuilder.toString();
     }
 
     private String readString(JsonReader jsonReader) throws IOException {
+        String specialCharacters = "[\\n\\r\\t]";
+
         if (jsonReader.peek() != JsonToken.STRING) {
             jsonReader.skipValue();
             return null;
         }
-        return Jsoup.parse(jsonReader.nextString()).text();
+        String word = Jsoup.parse(jsonReader.nextString()).text();
+        return word.replaceAll(specialCharacters, "");
+    }
+
+    private String readObject(JsonReader jsonReader) throws IOException {
+        String next = "";
+
+        if (jsonReader.peek() != JsonToken.BEGIN_OBJECT) {
+            jsonReader.skipValue();
+            return null;
+        }
+
+        jsonReader.beginObject();
+        while (jsonReader.hasNext()) {
+            if (jsonReader.peek() != JsonToken.NAME) {
+                jsonReader.skipValue();
+            }
+            switch (jsonReader.nextName()) {
+                case "name":
+                    if (jsonReader.peek() != JsonToken.STRING) {
+                        jsonReader.skipValue();
+                        break;
+                    }
+                    next = readString(jsonReader);
+                    break;
+                case "text":
+                    if (jsonReader.peek() != JsonToken.STRING) {
+                        jsonReader.skipValue();
+                        break;
+                    }
+                    next = readString(jsonReader);
+                    break;
+                default:
+                    jsonReader.skipValue();
+                    break;
+            }
+        }
+        jsonReader.endObject();
+        return next;
+    }
+
+    private String readStringOrArray(JsonReader jsonReader) throws IOException {
+        String word = "";
+        if (jsonReader.peek() == JsonToken.STRING) {
+            word = readString(jsonReader);
+        } else if (jsonReader.peek() == JsonToken.BEGIN_ARRAY) {
+            word = readArray(jsonReader);
+        }
+        return word;
     }
 }
