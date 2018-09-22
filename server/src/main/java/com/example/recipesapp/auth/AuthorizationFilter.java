@@ -13,6 +13,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -21,6 +23,8 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 @Component
 public class AuthorizationFilter implements Filter {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthorizationFilter.class);
 
     private IdTokenVerifier idTokenVerifier;
     private UserRepository userRepository;
@@ -42,6 +46,8 @@ public class AuthorizationFilter implements Filter {
 
         if (idToken == null || !idToken.startsWith("Bearer")) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            logger.error("No token in Authorization header");
+            return;
         }
 
         idToken = idToken.replace("Bearer ", "");
@@ -52,11 +58,15 @@ public class AuthorizationFilter implements Filter {
                 String userId = payload.getSubject();
                 if (this.userRepository.findById(userId) == null) {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                    logger.error("No user specified by token");
+                    return;
                 }
                 SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(userId, ""));
             }
         } catch (GeneralSecurityException | InvalidTokenException e) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            logger.error("Invalid token");
+            return;
         }
         filterChain.doFilter(request, response);
     }

@@ -47,8 +47,8 @@ public class AuthController {
                 if (!user.getName().equals(googleUserName)) {
                     user.setName(googleUserName);
                 }
-                if (!user.getEmail().equals(googleUserEmail)) {
-                    user.setName(googleUserEmail);
+                if (!user.getAvatarUrl().equals(googleUserAvatar)) {
+                    user.setAvatarUrl(googleUserAvatar);
                 }
                 userRepository.save(user);
             }

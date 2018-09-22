@@ -20,6 +20,9 @@ export class Interceptor implements HttpInterceptor {
 
   constructor(private router: Router,
               private snackBar: MatSnackBar) {
+  }
+
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     if (localStorage.getItem('currentUser')) {
       const currentUser: User = JSON.parse(localStorage.getItem('currentUser'));
       if (currentUser.idToken) {
@@ -30,12 +33,6 @@ export class Interceptor implements HttpInterceptor {
     } else {
       this.token = null;
     }
-  }
-
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    console.log('intercept');
-    console.log(request.headers.has('Authorization'));
-    console.log(this.token);
 
     if (!request.headers.has('Accept')) {
       request = request.clone({
@@ -58,7 +55,15 @@ export class Interceptor implements HttpInterceptor {
   }
 
   private handleError(err: HttpErrorResponse): Observable<any> {
-    if (err.status === 409) {
+    if (err.status === 401) {
+      this.snackBar.open('Błąd uwierzytelnienia.', 'Zamknij', {
+        duration: 7000
+      });
+    } else if (err.status === 403) {
+      this.snackBar.open('Brak dostępu.', 'Zamknij', {
+        duration: 7000
+      });
+    } else if (err.status === 409) {
       this.snackBar.open('Dodałeś już przepis z tej strony.', 'Zamknij', {
         duration: 7000
       });
