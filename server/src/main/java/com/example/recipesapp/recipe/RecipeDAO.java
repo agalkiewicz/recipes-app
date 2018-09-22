@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -18,11 +19,11 @@ public class RecipeDAO {
         return entityManager;
     }
 
-    public void getRecipeByIngredients(String ingredients) {
-        @SuppressWarnings("unchecked")
-        List<Long> result = entityManager
-                .createQuery("SELECT DISTINCT id FROM recipes where fts(ingredients_tokens, '" + ingredients + "') = true")
-                .getResultList();
-        System.out.println(result);
+    public List<Recipe> getRecipeByIngredients(String ingredients, String userId) {
+        TypedQuery<Recipe> query = entityManager.createQuery("SELECT r FROM Recipe r WHERE r.user.id = :userId AND fts(ingredients_tokens, '" + ingredients + "') = true ORDER BY id DESC ", Recipe.class);
+        query.setParameter("userId", userId);
+        List<Recipe> result = query.getResultList();
+
+        return result;
     }
 }

@@ -24,36 +24,24 @@ public class PgFullTextSearchFunction implements SQLFunction {
         String field = (String) args.get(0);
         String value = (String) args.get(1);
 
-        System.out.println("value: " + value.replace("'",""));
         String[] valuesArray = value
-                        .replaceAll("'","")
-                        .replace("[","")
-                        .replace("]","")
-                        .replaceAll("\"","")
-                        .split(", ");
+                .replaceAll("\'", "")
+                .split(", ");
         List<String> valuesList = new ArrayList<>(Arrays.asList(valuesArray));
 
-        System.out.println(valuesArray[0]);
-        System.out.println(valuesArray[1]);
 
         String query = "'(";
-
-        for (Iterator<String> i = valuesList.iterator(); i.hasNext();) {
+        for (Iterator<String> i = valuesList.iterator(); i.hasNext(); ) {
             query += i.next();
 
             if (i.hasNext()) {
                 query += " | ";
             }
         }
-
         query += ")'";
-
-        System.out.println("query: " + query);
 
         String fragment = field + " @@ ";
         fragment += "to_tsquery('polish', " + query + ")";
-
-        System.out.println("fragment: " + fragment);
 
         return fragment;
 

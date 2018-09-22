@@ -26,9 +26,13 @@ export class RecipeService {
   }
 
   searchByTerms(terms: string[]) {
-    console.log('service searchByTerms');
+    console.log('service searchRecipesByTerms', terms);
 
-    const url = `${this.recipesUrl}/search?terms=${JSON.stringify(terms)}`;
+    let query = '';
+    terms.forEach(term => {
+      query += 'terms=' + term + '&'
+    });
+    const url = `${this.recipesUrl}/search?${query}`;
 
     return this.http.get<Recipe[]>(url);
   }

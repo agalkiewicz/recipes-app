@@ -23,6 +23,8 @@ export class RecipesComponent implements OnInit {
   readonly separatorKeysCodes: number[] = [COMMA, ENTER];
   searchTerms: string[];
 
+  noRecipesInfo = 'Nie dodano jeszcze żadnych przepisów.';
+
   constructor(private recipeService: RecipeService,
               private signInService: SignInService) {
     this.searchTerms = [];
@@ -48,18 +50,10 @@ export class RecipesComponent implements OnInit {
           this.changeList(pageEvent);
         }
       });
-
   }
 
   private getAll(): void {
-    this.recipeService.getAll()
-      .subscribe(recipes => {
-        console.log('get all recipes');
-        console.log(recipes);
-        this.recipes = recipes;
-        this.recipesLength = this.recipes.length;
-        this.pagedRecipes = this.recipes.slice(0, this.pageSize);
-      });
+    this.getAllRecipes();
   }
 
   changeListTop(event: PageEvent) {
@@ -82,9 +76,6 @@ export class RecipesComponent implements OnInit {
   }
 
   addSearchTerm(event: MatChipInputEvent): void {
-    console.log('addSearchTerm');
-    console.log(event);
-
     const input = event.input;
     const value = event.value;
 
@@ -98,27 +89,39 @@ export class RecipesComponent implements OnInit {
   }
 
   removeSearchTerm(searchTerm: string): void {
-    console.log('removeSearchTerm');
-    console.log(searchTerm);
-
     const index = this.searchTerms.indexOf(searchTerm);
-
     if (index >= 0) {
       this.searchTerms.splice(index, 1);
+    }
+    if (this.searchTerms.length) {
+      this.searchRecipesByTerms();
+    } else {
+      this.getAllRecipes();
     }
   }
 
   search() {
-    console.log('search', this.searchTerms);
+    this.searchRecipesByTerms();
+  }
 
+  private searchRecipesByTerms() {
     this.recipeService.searchByTerms(this.searchTerms)
       .subscribe(recipes => {
-        console.log('Znalezione przepisy:', this.recipes);
-
+        if (!recipes.length) {
+          this.noRecipesInfo = 'Nie znaleziono przepisów pasujących do kryteriów.';
+        }
         this.recipes = recipes;
         this.recipesLength = this.recipes.length;
         this.pagedRecipes = this.recipes.slice(0, this.pageSize);
       });
-    this.searchTerms = [];
+  }
+
+  private getAllRecipes() {
+    this.recipeService.getAll()
+      .subscribe(recipes => {
+        this.recipes = recipes;
+        this.recipesLength = this.recipes.length;
+        this.pagedRecipes = this.recipes.slice(0, this.pageSize);
+      });
   }
 }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/recipes")
@@ -112,13 +113,20 @@ public class RecipeController {
     @GetMapping("/search")
     public ResponseEntity<List<RecipeDTO>> findByTerms(@RequestParam(value = "terms", required = true) List<String> terms) {
         try {
+            String userId = SecurityContextHolder.getContext().getAuthentication().getName();
             String termsString = String.join(", ", terms);
-            recipeDAO.getRecipeByIngredients(termsString);
+            List<Recipe> recipes = recipeDAO.getRecipeByIngredients(termsString, userId);
 
-            List<RecipeDTO> recipeDTOList = new ArrayList<>();
+//            List<RecipeDTO> recipeDTOList = new ArrayList<>();
+//            List<String> collect = staff.stream().map(x -> x.getName()).collect(Collectors.toList());
 //            for (Recipe recipe : recipes) {
 //                recipeDTOList.add(new RecipeDTO(recipe));
 //            }
+
+            List<RecipeDTO> recipeDTOList = new ArrayList<>();
+            if (!recipes.isEmpty()) {
+                recipeDTOList = recipes.stream().map(recipe -> new RecipeDTO(recipe)).collect(Collectors.toList());
+            }
 
             logger.info("Get recipes by terms: {}", recipeDTOList);
 

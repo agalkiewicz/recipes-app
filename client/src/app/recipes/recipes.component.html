@@ -1,8 +1,5 @@
 <div class="container">
   <div class="recipe-search">
-    <div>
-      Szukaj przepisu po składnikach lub nazwie dania...
-    </div>
     <div class="input-div">
       <mat-form-field class="chip-list">
         <mat-chip-list #chipList>
@@ -12,7 +9,7 @@
             <mat-icon matChipRemove>cancel</mat-icon>
           </mat-chip>
         </mat-chip-list>
-        <input placeholder="jajka, spaghetti..."
+        <input placeholder="Szukaj przepisu po składnikach lub nazwie dania..."
                [matChipInputFor]="chipList"
                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                [matChipInputAddOnBlur]="false"
@@ -24,10 +21,9 @@
   </div>
 
   <div class="add-new-recipe">
-    <div>Wklej adres www strony z przepisem:</div>
     <div class="input-div">
       <mat-form-field>
-        <input #recipeUrl matInput>
+        <input #recipeUrl matInput placeholder="Wklej adres www strony z przepisem">
       </mat-form-field>
       <button id="add-recipe-btn" mat-raised-button (click)="add(recipeUrl.value); recipeUrl.value=''">Dodaj przepis
       </button>
@@ -42,10 +38,8 @@
                  class="top-paginator">
   </mat-paginator>
   <div fxLayout="row" fxLayout.xs="column" fxLayoutWrap fxLayoutGap="1%">
-    <div *ngIf="!pagedRecipes.length"
-         class="no-recipe">
-      Nie dodano jeszcze żadnych przepisów.
-    </div>
+    <div *ngIf="!pagedRecipes.length" class="no-recipe">{{noRecipesInfo}}</div>
+
     <div *ngFor="let recipe of pagedRecipes" fxFlex="24%" fxFlex.sm="49%" fxFlex.md="32%">
       <a routerLink="/recipes/{{recipe.id}}">
         <mat-card class="recipe-card">
