@@ -117,12 +117,6 @@ public class RecipeController {
             String termsString = String.join(", ", terms);
             List<Recipe> recipes = recipeDAO.getRecipeByIngredients(termsString, userId);
 
-//            List<RecipeDTO> recipeDTOList = new ArrayList<>();
-//            List<String> collect = staff.stream().map(x -> x.getName()).collect(Collectors.toList());
-//            for (Recipe recipe : recipes) {
-//                recipeDTOList.add(new RecipeDTO(recipe));
-//            }
-
             List<RecipeDTO> recipeDTOList = new ArrayList<>();
             if (!recipes.isEmpty()) {
                 recipeDTOList = recipes.stream().map(recipe -> new RecipeDTO(recipe)).collect(Collectors.toList());

@@ -16,38 +16,44 @@ public class PgFullTextSearchFunction implements SQLFunction {
 
     @Override
     public String render(Type type, List args, SessionFactoryImplementor sessionFactoryImplementor) throws QueryException {
-        if (args.size() < 2) {
+        if (args.size() < 1) {
             throw new IllegalArgumentException(
-                    "The function has 2 arguments.");
+                    "The function has 1 argument.");
         }
 
-        String column = (String) args.get(0);
-        String value = (String) args.get(1);
+        String value = (String) args.get(0);
 
         String[] valuesArray = value
-                .replaceAll("\'", "")
+                .replaceAll("'", "")
                 .split(", ");
         List<String> valuesList = new ArrayList<>(Arrays.asList(valuesArray));
 
 
-        String query = "'(";
+        StringBuilder query = new StringBuilder("\'");
         for (Iterator<String> i = valuesList.iterator(); i.hasNext(); ) {
-            query += i.next();
+            String phrase = i.next();
+            List<String> phraseArray = new ArrayList<>(Arrays.asList(phrase.split(" ")));
 
+            if (phraseArray.size() > 1) {
+                query.append("(");
+                for (Iterator<String> j = phraseArray.iterator(); j.hasNext(); ) {
+                    query.append(j.next());
+
+                    if (j.hasNext()) {
+                        query.append(" & ");
+                    }
+                }
+                query.append(")");
+            } else {
+                query.append(phraseArray.get(0));
+            }
             if (i.hasNext()) {
-                query += " | ";
+                query.append(" | ");
             }
         }
-        query += ")'";
+        query.append("\'");
 
-        if (column.equals("title")) {
-            column += "to_tsvector(title)";
-        }
-
-        return column + " @@ to_tsquery('polish', " + query + ")";
-
-//        return fragment;
-
+        return "to_tsvector(title || ingredients_tokens) @@ to_tsquery('polish', " + query.toString() + ")";
     }
 
     @Override

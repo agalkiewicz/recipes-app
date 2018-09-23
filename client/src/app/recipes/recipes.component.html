@@ -33,7 +33,7 @@
   <mat-paginator #topPaginator
                  [length]="recipesLength"
                  [pageSize]="pageSize"
-                 [pageSizeOptions]="[12, 24, 36]"
+                 [pageSizeOptions]="[6, 12, 18]"
                  (page)="changeListTop($event)"
                  class="top-paginator">
   </mat-paginator>
@@ -60,7 +60,7 @@
   <mat-paginator #bottomPaginator
                  [length]="recipesLength"
                  [pageSize]="pageSize"
-                 [pageSizeOptions]="[12, 24, 36]"
+                 [pageSizeOptions]="[6, 12, 18]"
                  (page)="changeListBottom($event)"
                  class="bottom-paginator">
   </mat-paginator>
