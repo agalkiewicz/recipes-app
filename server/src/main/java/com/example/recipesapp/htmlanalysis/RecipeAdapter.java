@@ -1,6 +1,7 @@
 package com.example.recipesapp.htmlanalysis;
 
 import com.example.recipesapp.recipe.Recipe;
+import com.example.recipesapp.recipe.RecipeStep;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
@@ -8,6 +9,9 @@ import com.google.gson.stream.JsonWriter;
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class RecipeAdapter extends TypeAdapter {
 
@@ -72,7 +76,14 @@ public class RecipeAdapter extends TypeAdapter {
                     recipe.setDescription(readString(jsonReader));
                     break;
                 case "recipeInstructions":
-                    recipe.setInstructions(readStringOrArray(jsonReader));
+                    if (jsonReader.peek() == JsonToken.STRING) {
+                        recipe.addStep(readString(jsonReader));
+                    } else if (jsonReader.peek() == JsonToken.BEGIN_ARRAY) {
+                        List<String> instructions = readArray(jsonReader);
+                        for (String instruction : instructions) {
+                            recipe.addStep(instruction);
+                        }
+                    }
                     break;
                 case "recipeIngredient":
                     recipe.setIngredients(readStringOrArray(jsonReader));
@@ -92,7 +103,7 @@ public class RecipeAdapter extends TypeAdapter {
         return recipe;
     }
 
-    private String readArray(JsonReader jsonReader) throws IOException {
+    private String readArrayIntoString(JsonReader jsonReader) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
         String next = "";
 
@@ -117,6 +128,30 @@ public class RecipeAdapter extends TypeAdapter {
         }
 
         return stringBuilder.toString();
+    }
+
+    private List<String> readArray(JsonReader jsonReader) throws IOException {
+        List<String> values = new ArrayList<>();
+
+        if (jsonReader.peek() != JsonToken.BEGIN_ARRAY && jsonReader.peek() != JsonToken.BEGIN_OBJECT) {
+            jsonReader.skipValue();
+            return null;
+        }
+        if (jsonReader.peek() == JsonToken.BEGIN_ARRAY) {
+            jsonReader.beginArray();
+            if (jsonReader.peek() == JsonToken.STRING) {
+                while (jsonReader.hasNext()) {
+                    values.add(readString(jsonReader));
+                }
+            } else if (jsonReader.peek() == JsonToken.BEGIN_OBJECT) {
+                while (jsonReader.hasNext()) {
+                    values.add(readObject(jsonReader));
+                }
+            }
+            jsonReader.endArray();
+        }
+
+        return values;
     }
 
     private String readString(JsonReader jsonReader) throws IOException {
@@ -179,7 +214,7 @@ public class RecipeAdapter extends TypeAdapter {
         if (jsonReader.peek() == JsonToken.STRING) {
             word = readString(jsonReader);
         } else if (jsonReader.peek() == JsonToken.BEGIN_ARRAY) {
-            word = readArray(jsonReader);
+            word = readArrayIntoString(jsonReader);
         }
         return word;
     }

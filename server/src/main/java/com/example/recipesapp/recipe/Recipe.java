@@ -6,6 +6,8 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "recipes")
@@ -26,7 +28,8 @@ public class Recipe {
 
     private String description;
 
-    private String instructions;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "recipe")
+    private List<RecipeStep> steps = new ArrayList<>();
 
     private String categories;
 
@@ -91,14 +94,6 @@ public class Recipe {
         this.description = description;
     }
 
-    public String getInstructions() {
-        return instructions;
-    }
-
-    public void setInstructions(String instructions) {
-        this.instructions = instructions;
-    }
-
     public String getCategories() {
         return categories;
     }
@@ -115,14 +110,32 @@ public class Recipe {
         this.user = user;
     }
 
+    public List<RecipeStep> getSteps() {
+        return steps;
+    }
+
+    public void setSteps(List<RecipeStep> steps) {
+        this.steps = steps;
+    }
+
+    public void addStep(String instruction) {
+        RecipeStep recipeStep = new RecipeStep(instruction);
+        this.steps.add(recipeStep);
+        recipeStep.setRecipe(this);
+    }
+
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(String.format("Recipe[id=%d, title='%s', url='%s'\n, image='%s'\n", id, title, url, image));
-        stringBuilder.append(String.format("ingredients='%s'\n", ingredients));
-        stringBuilder.append(String.format("instructions='%s'\n", instructions));
-        stringBuilder.append(String.format("categories='%s']", categories));
-
-        return stringBuilder.toString();
+        return "Recipe{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", ingredients='" + ingredients + '\'' +
+                ", url='" + url + '\'' +
+                ", image='" + image + '\'' +
+                ", description='" + description + '\'' +
+                ", steps=" + steps +
+                ", categories='" + categories + '\'' +
+                ", user=" + user +
+                '}';
     }
 }

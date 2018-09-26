@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-public class PgFullTextSearchFunction implements SQLFunction {
+public class PgTextSearchFunction implements SQLFunction {
 
     @Override
     public String render(Type type, List args, SessionFactoryImplementor sessionFactoryImplementor) throws QueryException {
@@ -53,7 +53,7 @@ public class PgFullTextSearchFunction implements SQLFunction {
         }
         query.append("\'");
 
-        return "to_tsvector(title || ingredients_tokens) @@ to_tsquery('polish', " + query.toString() + ")";
+        return "tokens @@ to_tsquery('polish', " + query.toString() + ")";
     }
 
     @Override

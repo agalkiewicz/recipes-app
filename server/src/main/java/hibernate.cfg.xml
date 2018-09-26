@@ -5,7 +5,7 @@
 <!--<hibernate-configuration>-->
     <!--<session-factory>-->
         <!--<property name="hibernate.connection.driver_class">org.postgresql.Driver</property>-->
-        <!--<property name="hibernate.dialect">com.example.recipesapp.fts.PgFullTextDialect</property>-->
+        <!--<property name="hibernate.dialect">com.example.recipesapp.fts.PostgreSQLDialect</property>-->
         <!--<property name="show_sql">true</property>-->
         <!--<property name="connection.pool_size">10</property>-->
     <!--</session-factory>-->

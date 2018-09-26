@@ -21,7 +21,7 @@
 ////        configuration.setProperty("hibernate.connection.password", System.getenv("RDS_PASSWORD"));
 //        configuration.setProperty("hibernate.id.new_generator_mappings", "false");
 //        configuration.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
-//        configuration.setProperty("hibernate.dialect", "com.example.recipesapp.fts.PgFullTextDialect");
+//        configuration.setProperty("hibernate.dialect", "com.example.recipesapp.fts.PostgreSQLDialect");
 //        configuration.setProperty("show_sql", "true");
 //
 //        try {

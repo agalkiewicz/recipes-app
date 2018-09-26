@@ -1,20 +1,15 @@
 package com.example.recipesapp.htmlanalysis;
 
-import com.example.recipesapp.dto.RecipeDTO;
 import com.example.recipesapp.exceptions.ScopeNotFoundException;
 import com.example.recipesapp.recipe.Recipe;
-import com.example.recipesapp.recipe.RecipeRepository;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.safety.Cleaner;
-import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -32,8 +27,6 @@ public class HtmlAnalysisService {
 
         Document document = Jsoup.connect(url).timeout(6000).get();
 
-        System.out.println(document);
-
 //        logger.info("document before: " + document);
 //
 //        Cleaner cleaner = new Cleaner(Whitelist.basicWithImages());
@@ -42,7 +35,7 @@ public class HtmlAnalysisService {
 //        logger.info("document after: " + document);
 
         Recipe recipe = null;
-
+        long startTime = System.currentTimeMillis();
         try {
             recipe = analyseJson(document);
         } catch (Exception e) {
@@ -54,6 +47,9 @@ public class HtmlAnalysisService {
             recipe = analyseHtml(document);
 
         }
+        long endTime = System.currentTimeMillis();
+
+        logger.info("Execution time: {}", endTime - startTime);
 
         recipe.setUrl(url);
 
@@ -62,8 +58,6 @@ public class HtmlAnalysisService {
 
     private Recipe analyseJson(Document document) {
         Elements scriptElements = document.select("script[type=\"application/ld+json\"]");
-
-        System.out.println(scriptElements);
 
         final GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(Recipe.class, new RecipeAdapter());
@@ -105,9 +99,8 @@ public class HtmlAnalysisService {
             if (elements.size() != 0) {
                 for (Element element : elements) {
                     logger.debug(element.text());
-                    stringBuilder.append(element.text()).append("@");
+                    recipe.addStep(element.text());
                 }
-                recipe.setInstructions(stringBuilder.toString());
                 stringBuilder.setLength(0);
             }
 
