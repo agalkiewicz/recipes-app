@@ -88,9 +88,6 @@ public class RecipeAdapter extends TypeAdapter {
                 case "recipeIngredient":
                     recipe.setIngredients(readStringOrArray(jsonReader));
                     break;
-                case "recipeCategory":
-                    recipe.setCategories(readStringOrArray(jsonReader));
-                    break;
                 default:
                     jsonReader.skipValue();
                     break;
@@ -107,7 +104,7 @@ public class RecipeAdapter extends TypeAdapter {
         StringBuilder stringBuilder = new StringBuilder();
         String next = "";
 
-        if (jsonReader.peek() != JsonToken.BEGIN_ARRAY && jsonReader.peek() != JsonToken.BEGIN_OBJECT) {
+        if (jsonReader.peek() != JsonToken.BEGIN_ARRAY) {
             jsonReader.skipValue();
             return null;
         }
@@ -133,10 +130,6 @@ public class RecipeAdapter extends TypeAdapter {
     private List<String> readArray(JsonReader jsonReader) throws IOException {
         List<String> values = new ArrayList<>();
 
-        if (jsonReader.peek() != JsonToken.BEGIN_ARRAY && jsonReader.peek() != JsonToken.BEGIN_OBJECT) {
-            jsonReader.skipValue();
-            return null;
-        }
         if (jsonReader.peek() == JsonToken.BEGIN_ARRAY) {
             jsonReader.beginArray();
             if (jsonReader.peek() == JsonToken.STRING) {
@@ -150,7 +143,6 @@ public class RecipeAdapter extends TypeAdapter {
             }
             jsonReader.endArray();
         }
-
         return values;
     }
 
@@ -161,17 +153,12 @@ public class RecipeAdapter extends TypeAdapter {
             jsonReader.skipValue();
             return null;
         }
-        String word = Jsoup.parse(jsonReader.nextString()).text();
+        String word = jsonReader.nextString();
         return word.replaceAll(specialCharacters, "");
     }
 
     private String readObject(JsonReader jsonReader) throws IOException {
         String next = "";
-
-        if (jsonReader.peek() != JsonToken.BEGIN_OBJECT) {
-            jsonReader.skipValue();
-            return null;
-        }
 
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
@@ -180,24 +167,8 @@ public class RecipeAdapter extends TypeAdapter {
             }
             switch (jsonReader.nextName()) {
                 case "name":
-                    if (jsonReader.peek() != JsonToken.STRING) {
-                        jsonReader.skipValue();
-                        break;
-                    }
-                    next = readString(jsonReader);
-                    break;
                 case "text":
-                    if (jsonReader.peek() != JsonToken.STRING) {
-                        jsonReader.skipValue();
-                        break;
-                    }
-                    next = readString(jsonReader);
-                    break;
                 case "url":
-                    if (jsonReader.peek() != JsonToken.STRING) {
-                        jsonReader.skipValue();
-                        break;
-                    }
                     next = readString(jsonReader);
                     break;
                 default:

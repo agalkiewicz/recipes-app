@@ -7,6 +7,8 @@ import com.google.gson.GsonBuilder;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.safety.Cleaner;
+import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,14 +29,10 @@ public class HtmlAnalysisService {
 
         Document document = Jsoup.connect(url).timeout(6000).get();
 
-//        logger.info("document before: " + document);
-//
-//        Cleaner cleaner = new Cleaner(Whitelist.basicWithImages());
-//        document = cleaner.clean(document);
-//
-//        logger.info("document after: " + document);
+//        System.out.println("base uri: " + document.baseUri());
 
         Recipe recipe = null;
+
         long startTime = System.currentTimeMillis();
         try {
             recipe = analyseJson(document);
@@ -45,7 +43,6 @@ public class HtmlAnalysisService {
 
         if (recipe == null) {
             recipe = analyseHtml(document);
-
         }
         long endTime = System.currentTimeMillis();
 
@@ -57,12 +54,12 @@ public class HtmlAnalysisService {
     }
 
     private Recipe analyseJson(Document document) {
+        Recipe recipe = null;
         Elements scriptElements = document.select("script[type=\"application/ld+json\"]");
 
         final GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(Recipe.class, new RecipeAdapter());
         final Gson gson = gsonBuilder.create();
-        Recipe recipe = null;
 
         for (Element scriptElement : scriptElements) {
             recipe = gson.fromJson(scriptElement.html(), Recipe.class);
@@ -76,74 +73,76 @@ public class HtmlAnalysisService {
     }
 
     private Recipe analyseHtml(Document document) throws ScopeNotFoundException {
-        Recipe recipe = new Recipe();
+        Recipe recipe = null;
 
         Elements elements = document.select("[itemtype*=schema.org/Recipe]");
         if (elements.size() != 0) {
-            StringBuilder stringBuilder = new StringBuilder();
-            Element scope = elements.get(0);
-            elements = document.select("[itemprop=recipeIngredient]");
-            if (elements.size() == 0) {
-                elements = document.select("[itemprop=ingredients]");
-            }
-            if (elements.size() != 0) {
-                for (Element element : elements) {
-                    logger.debug(element.text());
-                    stringBuilder.append(element.text()).append("@");
-                }
-                recipe.setIngredients(stringBuilder.toString());
-                stringBuilder.setLength(0);
-            }
-
-            elements = document.select("[itemprop=recipeInstructions]");
-            if (elements.size() != 0) {
-                for (Element element : elements) {
-                    logger.debug(element.text());
-                    recipe.addStep(element.text());
-                }
-                stringBuilder.setLength(0);
-            }
-
-            elements = scope.select("[itemprop=name]");
-            if (elements.size() != 0) {
-                stringBuilder.append(elements.last().text());
-                logger.debug(stringBuilder.toString());
-                recipe.setTitle(stringBuilder.toString());
-                stringBuilder.setLength(0);
-            }
-
-            elements = scope.select("[itemprop=description]");
-            if (elements.size() != 0) {
-                stringBuilder.append(elements.get(0).text());
-                logger.debug(stringBuilder.toString());
-                recipe.setDescription(stringBuilder.toString());
-                stringBuilder.setLength(0);
-            }
-
-            elements = scope.select("[itemprop=image]");
-            if (elements.size() != 0) {
-                Element image = elements.last();
-                elements = image.select("[src]");
-                String imageUrl = elements.get(0).attr("src");
-
-                if (!(imageUrl.contains("http://") || imageUrl.contains("https://"))) {
-                    imageUrl = "http://" + imageUrl;
-                }
-                logger.debug(imageUrl);
-                recipe.setImage(imageUrl);
-            }
-
-            elements = scope.select("[itemprop=recipeCategory]");
-            if (elements.size() != 0) {
-                for (Element element : elements) {
-                    logger.debug(element.text());
-                    stringBuilder.append(element.text()).append("@");
-                }
-                recipe.setCategories(stringBuilder.toString());
-                stringBuilder.setLength(0);
-            }
+            recipe = readStructuralData(elements, document, true);
         } else {
-            throw new ScopeNotFoundException();
+            elements = document.select("[typeOf*=Recipe]");
+            if (elements.size() != 0) {
+                recipe = readStructuralData(elements, document, false);
+            } else {
+                throw new ScopeNotFoundException();
+            }
+        }
+        return recipe;
+    }
+
+    private Recipe readStructuralData(Elements elements, Document document, boolean isMicrodata) {
+        Recipe recipe = new Recipe();
+        StringBuilder stringBuilder = new StringBuilder();
+        Element scope = elements.get(0);
+        String property = isMicrodata ? "[itemprop=recipeIngredient]" : "[property=recipeIngredient]";
+        elements = document.select(property);
+        if (elements.size() == 0) {
+            property = isMicrodata ? "[itemprop=ingredients]" : "[property=ingredients]";
+            elements = document.select(property);
+        }
+        if (elements.size() != 0) {
+            for (Element element : elements) {
+                stringBuilder.append(element.text()).append("@");
+            }
+            recipe.setIngredients(stringBuilder.toString());
+            stringBuilder.setLength(0);
+        }
+
+        property = isMicrodata ? "[itemprop=recipeInstructions]" : "[property=recipeInstructions]";
+        elements = document.select(property);
+        if (elements.size() != 0) {
+            for (Element element : elements) {
+                recipe.addStep(element.text());
+            }
+            stringBuilder.setLength(0);
+        }
+
+        property = isMicrodata ? "[itemprop=name]" : "[property=name]";
+        elements = scope.select(property);
+        if (elements.size() != 0) {
+            stringBuilder.append(elements.first().text());
+            recipe.setTitle(stringBuilder.toString());
+            stringBuilder.setLength(0);
+        }
+
+        property = isMicrodata ? "[itemprop=description]" : "[property=description]";
+        elements = scope.select(property);
+        if (elements.size() != 0) {
+            stringBuilder.append(elements.first().text());
+            recipe.setDescription(stringBuilder.toString());
+            stringBuilder.setLength(0);
+        }
+
+        property = isMicrodata ? "[itemprop=image]" : "[property=image]";
+        elements = scope.select(property);
+        if (elements.size() != 0) {
+            Element image = elements.last();
+            elements = image.select("[src]");
+            String imageUrl = elements.get(0).absUrl("src");
+
+            if (!(imageUrl.contains("http://") || imageUrl.contains("https://"))) {
+                imageUrl = "http://" + imageUrl;
+            }
+            recipe.setImage(imageUrl);
         }
 
         return recipe;

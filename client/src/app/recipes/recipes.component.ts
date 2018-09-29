@@ -5,6 +5,7 @@ import {RecipeService} from '../recipe.service';
 import {SignInService} from "../service/sign-in.service";
 import {MatChipInputEvent, MatPaginator, MatSnackBar, PageEvent} from '@angular/material';
 import {COMMA, ENTER} from "@angular/cdk/keycodes";
+import {HttpErrorResponse} from "@angular/common/http";
 
 @Component({
   selector: 'app-recipes',
@@ -44,7 +45,7 @@ export class RecipesComponent implements OnInit, AfterViewInit {
       return;
     }
     this.recipeService.add({url: url} as RecipeUrlDto)
-      .subscribe(recipe => {
+      .subscribe((recipe: Recipe) => {
         this.recipes.unshift(recipe);
         if (this.topPaginator.pageIndex === 0) {
           let pageEvent = new PageEvent();
@@ -53,11 +54,10 @@ export class RecipesComponent implements OnInit, AfterViewInit {
           pageEvent.pageSize = this.topPaginator.pageSize;
           this.changeList(pageEvent);
         }
-
-        this.snackBar.open('Pomyślnie dodano nowy przepis.', 'Zamknij', {
-          duration: 3000
+      },
+        (err: HttpErrorResponse) => {
+        console.log('err in component', err);
         });
-      });
   }
 
   private getAll(): void {

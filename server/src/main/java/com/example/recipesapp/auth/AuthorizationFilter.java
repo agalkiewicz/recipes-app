@@ -1,5 +1,6 @@
 package com.example.recipesapp.auth;
 
+import com.example.recipesapp.exceptions.InvalidTokenException;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 
 import java.io.IOException;

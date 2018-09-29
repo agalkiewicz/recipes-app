@@ -55,6 +55,7 @@ export class Interceptor implements HttpInterceptor {
   }
 
   private handleError(err: HttpErrorResponse): Observable<any> {
+    console.log('handle error', err);
     if (err.status === 401) {
       this.snackBar.open('Błąd uwierzytelnienia.', 'Zamknij', {
         duration: 7000
@@ -63,18 +64,14 @@ export class Interceptor implements HttpInterceptor {
       this.snackBar.open('Brak dostępu.', 'Zamknij', {
         duration: 7000
       });
-    } else if (err.status === 409) {
-      this.snackBar.open('Dodałeś już przepis z tej strony.', 'Zamknij', {
+    } else if (err.status === 422) {
+      this.snackBar.open(err.error.message, 'Zamknij', {
         duration: 7000
       });
     } else if (err.status === 500) {
       const errorSnackbar = this.snackBar.open('Wystąpił błąd pobierania danych', 'Odśwież');
       errorSnackbar.onAction().subscribe(() => {
         window.location.reload();
-      });
-    } else if (err.status === 501) {
-      this.snackBar.open('Nie można dodać przepisu z tej strony. Strona nie implementuje znaczników Schema.org.', 'Zamknij', {
-        duration: 7000
       });
     }
     throw err;

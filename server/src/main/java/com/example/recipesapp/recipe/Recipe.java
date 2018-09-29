@@ -31,8 +31,6 @@ public class Recipe {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "recipe")
     private List<RecipeStep> steps = new ArrayList<>();
 
-    private String categories;
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -94,14 +92,6 @@ public class Recipe {
         this.description = description;
     }
 
-    public String getCategories() {
-        return categories;
-    }
-
-    public void setCategories(String categories) {
-        this.categories = categories;
-    }
-
     public User getUser() {
         return user;
     }
@@ -134,7 +124,6 @@ public class Recipe {
                 ", image='" + image + '\'' +
                 ", description='" + description + '\'' +
                 ", steps=" + steps +
-                ", categories='" + categories + '\'' +
                 ", user=" + user +
                 '}';
     }

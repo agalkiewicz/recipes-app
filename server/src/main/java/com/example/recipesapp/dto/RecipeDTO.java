@@ -39,9 +39,6 @@ public class RecipeDTO {
         this.image = recipe.getImage();
         this.description = recipe.getDescription();
         this.instructions = recipe.getSteps().stream().map(RecipeStep::getInstruction).collect(Collectors.toList());
-        if (recipe.getCategories() != null) {
-            this.categories = Arrays.asList(recipe.getCategories().split("@"));
-        }
     }
 
     public void addIngredient(String ingredient) {

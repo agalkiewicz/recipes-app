@@ -3,6 +3,8 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
 import {RecipeUrlDto} from './dto/recipe-url-dto';
 import {Recipe} from './dto/recipe';
+import {catchError} from "rxjs/operators";
+import {of} from "rxjs/observable/of";
 
 @Injectable()
 export class RecipeService {
@@ -13,7 +15,12 @@ export class RecipeService {
   }
 
   add(url: RecipeUrlDto): Observable<Recipe> {
-    return this.http.post<Recipe>(this.recipesUrl, url);
+    return this.http.post<Recipe>(this.recipesUrl, url).pipe(
+      catchError(error => {
+        console.log('error', error);
+        return of(error);
+      })
+    );
   }
 
   getAll(): Observable<Recipe[]> {

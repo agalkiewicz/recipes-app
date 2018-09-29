@@ -2,6 +2,7 @@ package com.example.recipesapp.recipe;
 
 import com.example.recipesapp.auth.User;
 import com.example.recipesapp.auth.UserRepository;
+import com.example.recipesapp.dto.ErrorDTO;
 import com.example.recipesapp.dto.RecipeDTO;
 import com.example.recipesapp.dto.RecipeUrlDTO;
 import com.example.recipesapp.exceptions.ScopeNotFoundException;
@@ -63,7 +64,7 @@ public class RecipeController {
     }
 
     @PostMapping(consumes = "application/json", produces = "application/json")
-    public ResponseEntity<RecipeDTO> add(@RequestBody RecipeUrlDTO recipeUrlDTO) {
+    public ResponseEntity add(@RequestBody RecipeUrlDTO recipeUrlDTO) {
         try {
             Recipe recipe = htmlAnalysisService.analyse(recipeUrlDTO.getUrl());
             String userId = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -79,10 +80,10 @@ public class RecipeController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (ScopeNotFoundException e) {
             logger.error(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+            return new ResponseEntity<>(new Error("Nie można dodać przepisu z tej strony. Strona nie implementuje znaczników Schema.org."), HttpStatus.UNPROCESSABLE_ENTITY);
         } catch (DataIntegrityViolationException e) {
             logger.error(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new Error("Dodano już przepis z tej strony."), HttpStatus.UNPROCESSABLE_ENTITY);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
