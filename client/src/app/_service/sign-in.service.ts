@@ -1,15 +1,14 @@
 import {Injectable} from '@angular/core';
-import {User} from "../dto/user";
+import {User} from "../_model/user";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Observable} from "rxjs/Observable";
-import {SignInProvider} from "../dto/sign-in-provider";
-import {GoogleSignInProvider} from "../google-sign-in-provider";
+import {SignInProvider} from "../_model/sign-in-provider";
+import {GoogleSignInProvider} from "./google-sign-in-provider";
 import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
 
 @Injectable()
 export class SignInService {
-  private provider: SignInProvider;
   private user: User = null;
   private authenticationState: BehaviorSubject<User> = new BehaviorSubject(null);
 
@@ -18,8 +17,8 @@ export class SignInService {
   }
 
   constructor(private http: HttpClient,
-              private router: Router) {
-    this.provider = new GoogleSignInProvider();
+              private router: Router,
+              private provider: GoogleSignInProvider) {
     this.provider.initialize().then((user: User) => {
       this.user = user;
       this.authenticationState.next(user);
@@ -39,7 +38,7 @@ export class SignInService {
   }
 
   signOut(): Promise<any> {
-    console.log('sign out service');
+    console.log('sign out _service');
     return new Promise((resolve, reject) => {
       if (this.user) {
         this.provider.signOut().then(() => {

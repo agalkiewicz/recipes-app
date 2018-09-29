@@ -1,6 +1,12 @@
 .recipe-card {
-  height: 280px;
+  height: 320px;
   margin-bottom: 5%;
+  padding-top: 0;
+  cursor: pointer;
+
+  &:focus {
+    outline: 0;
+  }
 
   .mat-card-image {
     height: 210px;
@@ -70,3 +76,15 @@
   width: 100%;
   padding: 50px;
 }
+
+.trash-icon {
+  position: absolute;
+  bottom: 15px;
+  right: 20px;
+  font-size: 24px;
+
+  &:hover, :active {
+    color: #C3FF00;
+  }
+}
+

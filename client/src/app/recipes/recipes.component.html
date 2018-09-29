@@ -33,7 +33,7 @@
   <mat-paginator #topPaginator
                  [length]="recipesLength"
                  [pageSize]="pageSize"
-                 [pageSizeOptions]="[6, 12, 18]"
+                 [pageSizeOptions]="[4, 12, 18]"
                  (page)="changeListTop($event)"
                  class="top-paginator">
   </mat-paginator>
@@ -41,26 +41,25 @@
     <div *ngIf="!pagedRecipes.length" class="no-recipe">{{noRecipesInfo}}</div>
 
     <div *ngFor="let recipe of pagedRecipes" fxFlex="24%" fxFlex.sm="49%" fxFlex.md="32%">
-      <a routerLink="/recipes/{{recipe.id}}">
-        <mat-card class="recipe-card">
-          <img *ngIf="recipe.image"
-               mat-card-image class="img-responsive"
-               [src]="recipe.image">
-          <div *ngIf="!recipe.image" mat-card-image
-               class="no-image">
-            <span>Brak zdjęcia</span>
-          </div>
-          <mat-card-content>
-            <h5 class="recipe-title">{{recipe.title}}</h5>
-          </mat-card-content>
-        </mat-card>
-      </a>
+      <mat-card class="recipe-card" routerLink="/recipes/{{recipe.id}}">
+        <i class="far fa-trash-alt trash-icon" (click)="removeRecipe(recipe, $event)"></i>
+        <img *ngIf="recipe.image"
+             mat-card-image class="img-responsive"
+             [src]="recipe.image">
+        <div *ngIf="!recipe.image" mat-card-image
+             class="no-image">
+          <span>Brak zdjęcia</span>
+        </div>
+        <mat-card-content>
+          <h5 class="recipe-title">{{recipe.title}}</h5>
+        </mat-card-content>
+      </mat-card>
     </div>
   </div>
   <mat-paginator #bottomPaginator
                  [length]="recipesLength"
                  [pageSize]="pageSize"
-                 [pageSizeOptions]="[6, 12, 18]"
+                 [pageSizeOptions]="[4, 12, 18]"
                  (page)="changeListBottom($event)"
                  class="bottom-paginator">
   </mat-paginator>

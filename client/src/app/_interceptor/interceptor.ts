@@ -10,8 +10,8 @@ import {MatSnackBar} from '@angular/material';
 import {Observable} from "rxjs/Observable";
 import {catchError} from "rxjs/operators";
 import {of} from "rxjs/observable/of";
-import {SignInService} from "../service/sign-in.service";
-import {User} from "../dto/user";
+import {SignInService} from "../_service/sign-in.service";
+import {User} from "../_model/user";
 import {current} from "codelyzer/util/syntaxKind";
 
 @Injectable()

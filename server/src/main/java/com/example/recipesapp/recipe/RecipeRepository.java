@@ -11,5 +11,5 @@ import java.util.List;
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     List<Recipe> findAllByOrderByIdDesc();
 
-    List<Recipe> findAllByUserIdOrderByIdDesc(String id);
+    List<Recipe> findAllByIsDeletedFalseAndUserIdOrderByIdDesc (String userId);
 }

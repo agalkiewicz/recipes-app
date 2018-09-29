@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
-import {RecipeUrlDto} from './dto/recipe-url-dto';
-import {Recipe} from './dto/recipe';
+import {RecipeUrlDto} from '../dto/recipe-url-dto';
+import {Recipe} from '../_model/recipe';
 import {catchError} from "rxjs/operators";
 import {of} from "rxjs/observable/of";
 
@@ -33,7 +33,7 @@ export class RecipeService {
   }
 
   searchByTerms(terms: string[]) {
-    console.log('service searchRecipesByTerms', terms);
+    console.log('_service searchRecipesByTerms', terms);
 
     let query = '';
     terms.forEach(term => {
@@ -42,5 +42,10 @@ export class RecipeService {
     const url = `${this.recipesUrl}/search?${query}`;
 
     return this.http.get<Recipe[]>(url);
+  }
+
+  update(id: number, propertyToChange) {
+    const url = `${this.recipesUrl}/${id}`;
+    return this.http.put(url, propertyToChange);
   }
 }

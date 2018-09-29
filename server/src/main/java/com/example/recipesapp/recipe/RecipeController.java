@@ -2,13 +2,12 @@ package com.example.recipesapp.recipe;
 
 import com.example.recipesapp.auth.User;
 import com.example.recipesapp.auth.UserRepository;
-import com.example.recipesapp.dto.ErrorDTO;
-import com.example.recipesapp.dto.RecipeDTO;
-import com.example.recipesapp.dto.RecipeUrlDTO;
+import com.example.recipesapp.dto.*;
 import com.example.recipesapp.exceptions.ScopeNotFoundException;
 import com.example.recipesapp.htmlanalysis.HtmlAnalysisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,7 +48,7 @@ public class RecipeController {
     public ResponseEntity<List<RecipeDTO>> getAll() {
         try {
             String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-            List<Recipe> recipes = recipeRepository.findAllByUserIdOrderByIdDesc(userId);
+            List<Recipe> recipes = recipeRepository.findAllByIsDeletedFalseAndUserIdOrderByIdDesc(userId);
 
             List<RecipeDTO> recipeDTOList = new ArrayList<>();
             for (Recipe recipe : recipes) {
@@ -98,6 +98,9 @@ public class RecipeController {
             if (!foundRecipe.getUser().getId().equals(userId)) {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
+            if (foundRecipe.isDeleted()) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
             RecipeDTO recipe = new RecipeDTO(foundRecipe);
             logger.info("Get a recipe to the client app: {}", recipe.toString());
 
@@ -126,6 +129,32 @@ public class RecipeController {
             logger.info("Get recipes by terms: {}", recipeDTOList);
 
             return new ResponseEntity<>(recipeDTOList, HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity update(@PathVariable Long id,
+                                 @RequestBody HashMap<String, String> propertyToChange) {
+        try {
+            Recipe foundRecipe = recipeRepository.findOne(id);
+            String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+            if (!foundRecipe.getUser().getId().equals(userId)) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+            if (propertyToChange.containsKey("isDeleted")) {
+                foundRecipe.setDeleted(Boolean.valueOf(propertyToChange.get("isDeleted")));
+            }
+            recipeRepository.save(foundRecipe);
+
+            logger.info("Mark recipe as deleted: {}", foundRecipe.toString());
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (NullPointerException e) {
+            logger.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

@@ -1,9 +1,9 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {SignInService} from "../service/sign-in.service";
-import {User} from "../dto/user";
+import {SignInService} from "../_service/sign-in.service";
+import {User} from "../_model/user";
 import {AppComponent} from "../app.component";
 import {Router} from "@angular/router";
-import {AuthGuard} from "../_guards/AuthGuard";
+import {AuthGuard} from "../_guard/AuthGuard";
 
 declare const gapi: any;
 

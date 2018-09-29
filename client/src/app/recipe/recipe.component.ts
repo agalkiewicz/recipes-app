@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { RecipeService } from '../recipe.service';
-import { Recipe } from '../dto/recipe';
+import { RecipeService } from '../_service/recipe.service';
+import { Recipe } from '../_model/recipe';
 
 @Component({
   selector: 'app-recipe',

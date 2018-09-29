@@ -19,7 +19,7 @@ public class Recipe {
     private Long id;
 
     private String title;
-
+ 
     private String ingredients;
 
     private String url;
@@ -36,6 +36,9 @@ public class Recipe {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private User user;
+
+    @Column(name="is_deleted")
+    private boolean isDeleted;
 
     public Recipe() {
     }
@@ -114,6 +117,14 @@ public class Recipe {
         recipeStep.setRecipe(this);
     }
 
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
+
     @Override
     public String toString() {
         return "Recipe{" +
@@ -125,6 +136,7 @@ public class Recipe {
                 ", description='" + description + '\'' +
                 ", steps=" + steps +
                 ", user=" + user +
+                ", isDeleted=" + isDeleted +
                 '}';
     }
 }

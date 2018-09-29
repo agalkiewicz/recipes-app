@@ -1,8 +1,8 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {Recipe} from '../dto/recipe';
+import {Recipe} from '../_model/recipe';
 import {RecipeUrlDto} from '../dto/recipe-url-dto';
-import {RecipeService} from '../recipe.service';
-import {SignInService} from "../service/sign-in.service";
+import {RecipeService} from '../_service/recipe.service';
+import {SignInService} from "../_service/sign-in.service";
 import {MatChipInputEvent, MatPaginator, MatSnackBar, PageEvent} from '@angular/material';
 import {COMMA, ENTER} from "@angular/cdk/keycodes";
 import {HttpErrorResponse} from "@angular/common/http";
@@ -17,7 +17,7 @@ export class RecipesComponent implements OnInit, AfterViewInit {
   pagedRecipes: Recipe[] = [];
 
   recipesLength = 0;
-  pageSize = 12;
+  pageSize = 4;
   @ViewChild('bottomPaginator') bottomPaginator: MatPaginator;
   @ViewChild('topPaginator') topPaginator: MatPaginator;
 
@@ -46,17 +46,17 @@ export class RecipesComponent implements OnInit, AfterViewInit {
     }
     this.recipeService.add({url: url} as RecipeUrlDto)
       .subscribe((recipe: Recipe) => {
-        this.recipes.unshift(recipe);
-        if (this.topPaginator.pageIndex === 0) {
+          this.recipes.unshift(recipe);
+          // if (this.topPaginator.pageIndex === 0) {
           let pageEvent = new PageEvent();
-          pageEvent.pageIndex = 0;
+          pageEvent.pageIndex = this.topPaginator.pageIndex;
           pageEvent.length = this.recipes.length;
           pageEvent.pageSize = this.topPaginator.pageSize;
           this.changeList(pageEvent);
-        }
-      },
+          // }
+        },
         (err: HttpErrorResponse) => {
-        console.log('err in component', err);
+          console.log('err in component', err);
         });
   }
 
@@ -129,5 +129,31 @@ export class RecipesComponent implements OnInit, AfterViewInit {
         this.recipesLength = this.recipes.length;
         this.pagedRecipes = this.recipes.slice(0, this.pageSize);
       });
+  }
+
+  removeRecipe(recipe: Recipe, event: any) {
+    event.stopPropagation();
+
+    this.recipeService.update(recipe.id, {isDeleted: true}).subscribe(() => {
+      const recipeIndex = this.recipes.indexOf(recipe);
+      this.recipes.splice(recipeIndex, 1);
+      let pageEvent = new PageEvent();
+      pageEvent.pageIndex = this.topPaginator.pageIndex;
+      pageEvent.length = this.recipes.length;
+      pageEvent.pageSize = this.topPaginator.pageSize;
+      this.changeList(pageEvent);
+
+      const snackBar = this.snackBar.open('Pomyślnie usunięto przepis.', 'Cofnij');
+      snackBar.onAction().subscribe(() => {
+        this.recipeService.update(recipe.id, {isDeleted: false}).subscribe(() => {
+          console.log('not deleted');
+          this.recipes.splice(recipeIndex, 0, recipe);
+          pageEvent.pageIndex = this.topPaginator.pageIndex;
+          pageEvent.length = this.recipes.length;
+          pageEvent.pageSize = this.topPaginator.pageSize;
+          this.changeList(pageEvent);
+        });
+      });
+    });
   }
 }
