@@ -1,3 +1,9 @@
-<div #googleSignIn class="google-sign-in">Zaloguj się przez Google</div>
-
-<button (click)="googleSignOut()" class="google-sign-out">Wyloguj się</button>
+<div class="container">
+  <div class="logo-div">
+    <img src="/assets/images/logo_purple.png" alt="Logo aplikacji">
+  </div>
+  <div #googleSignIn class="google-sign-in" (click)="signIn()">
+    <img src="../assets/images/g-logo.png" alt="Logo Google">
+    <span>Zaloguj się przez Google</span>
+  </div>
+</div>

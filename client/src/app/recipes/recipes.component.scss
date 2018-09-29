@@ -17,22 +17,56 @@
 }
 
 .add-new-recipe {
-  //display: flex;
-  margin-bottom: 1rem;
-
-  & > div:first-child {
-    width: 100%;
-  }
-
   mat-form-field {
-    width: 53%;
+    width: calc(100% - 160px);
   }
 
   button {
-    width: 45%;
+    width: 140px;
+    height: 40px;
   }
 }
 
 .top-paginator {
   margin-bottom: 0.8rem;
+}
+
+.recipe-search {
+  button {
+    width: 88px;
+    height: 40px;
+    position: relative;
+    top: 20px;
+  }
+
+  mat-form-field {
+    width: calc(100% - 100px);
+    height: 90px;
+  }
+
+  .mat-input-wrapper.mat-form-field-wrapper {
+    height: 60px !important;
+  }
+}
+
+.input-div {
+  width: calc(100% - 5px);
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.no-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Raleway, sans-serif;
+  text-transform: uppercase;
+  border-bottom: 1px solid darkgray;
+}
+
+.no-recipe {
+  text-align: center;
+  width: 100%;
+  padding: 50px;
 }

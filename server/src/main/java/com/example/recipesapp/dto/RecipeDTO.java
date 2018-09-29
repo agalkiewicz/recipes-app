@@ -1,6 +1,7 @@
 package com.example.recipesapp.dto;
 
 import com.example.recipesapp.recipe.Recipe;
+import com.example.recipesapp.recipe.RecipeStep;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,12 +38,7 @@ public class RecipeDTO {
         this.url = recipe.getUrl();
         this.image = recipe.getImage();
         this.description = recipe.getDescription();
-        if (recipe.getInstructions() != null) {
-            this.instructions = Arrays.asList(recipe.getInstructions().split("@"));
-        }
-        if (recipe.getCategories() != null) {
-            this.categories = Arrays.asList(recipe.getCategories().split("@"));
-        }
+        this.instructions = recipe.getSteps().stream().map(RecipeStep::getInstruction).collect(Collectors.toList());
     }
 
     public void addIngredient(String ingredient) {

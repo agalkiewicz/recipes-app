@@ -1,79 +1,46 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import { catchError, tap } from 'rxjs/operators';
-import { RecipeUrlDto } from './dto/recipe-url-dto';
-import { Recipe } from './dto/recipe';
-import { MessageService } from './message.service';
-import { of } from 'rxjs/observable/of';
-
-const httpOptions = {
-  headers: new HttpHeaders({'Content-Type': 'application/json'})
-};
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs/Observable';
+import {RecipeUrlDto} from './dto/recipe-url-dto';
+import {Recipe} from './dto/recipe';
+import {catchError} from "rxjs/operators";
+import {of} from "rxjs/observable/of";
 
 @Injectable()
 export class RecipeService {
 
-  private recipesUrl = 'http://localhost:8080/recipes';
+  private recipesUrl = 'http://localhost:8080/api/recipes';
 
-  constructor(private http: HttpClient,
-              private messageService: MessageService) {
+  constructor(private http: HttpClient) {
   }
 
   add(url: RecipeUrlDto): Observable<Recipe> {
-    return this.http.post<Recipe>(this.recipesUrl, url, httpOptions)
-      .pipe(
-        tap((recipe: Recipe) => {
-          this.log(`Dodano przepis, id=${recipe.id}.`);
-          console.log(recipe);
-        }),
-        catchError(this.handleError<Recipe>('add recipe'))
-      );
+    return this.http.post<Recipe>(this.recipesUrl, url).pipe(
+      catchError(error => {
+        console.log('error', error);
+        return of(error);
+      })
+    );
   }
 
   getAll(): Observable<Recipe[]> {
-    return this.http.get<Recipe[]>(this.recipesUrl)
-      .pipe(
-        catchError(this.handleError('getAll', []))
-      );
+    return this.http.get<Recipe[]>(this.recipesUrl);
   }
 
   getOne(id: number): Observable<Recipe> {
     const url = `${this.recipesUrl}/${id}`;
-    return this.http.get<Recipe>(url).pipe(
-      tap(_ => this.log(`Wyciągnięto przepis, id=${id}`)),
-      catchError(this.handleError<Recipe>(`get recipe`, null))
-    );
+    return this.http.get<Recipe>(url);
   }
 
-  /**
-   * Handle Http operation that failed.
-   * Let the app continue.
-   * @param operation - name of the operation that failed
-   * @param result - optional value to return as the observable result
-   */
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
+  searchByTerms(terms: string[]) {
+    console.log('service searchRecipesByTerms', terms);
 
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+    let query = '';
+    terms.forEach(term => {
+      query += 'terms=' + term + '&'
+    });
+    const url = `${this.recipesUrl}/search?${query}`;
 
-      // TODO: better job of transforming error for user consumption
-      if (error.status === 501) {
-        this.log(`Nie można przeanalizować treści podanej strony. Brak znaczników Schema.org`);
-      } else if (error.status === 409) {
-        this.log(`Przepis z podanej strony jest już zapisany.`);
-      } else {
-        this.log(`${operation} failed: ${error.message}`);
-      }
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
-  }
-
-  /** Log a RecipeService message with the MessageService */
-  private log(message: string) {
-    this.messageService.add('RecipeService: ' + message);
+    return this.http.get<Recipe[]>(url);
   }
 }

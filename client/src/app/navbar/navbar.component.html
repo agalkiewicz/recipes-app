@@ -1,0 +1,14 @@
+<mat-toolbar>
+  <a routerLink="/" class="logo">
+    <img class="logo" src="/assets/images/logo_white.png" alt="Logo aplikacji">
+  </a>
+
+  <!--<button mat-button [matMenuTriggerFor]="menu">Menu</button>-->
+  <div id="avatar" [matMenuTriggerFor]="menu"
+       [style.background-image]="'url(' + (user && user.imageUrl ? user.imageUrl : '/assets/images/avatar_placeholder.jpg') + ')'">
+  </div>
+  <mat-menu #menu="matMenu">
+    <div class="user-email">{{user.email}}</div>
+    <button id="logout-btn" mat-menu-item (click)="signOut()">Wyloguj się</button>
+  </mat-menu>
+</mat-toolbar>

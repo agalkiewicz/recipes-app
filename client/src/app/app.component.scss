@@ -1,19 +1,5 @@
 @import "../variables.scss";
 
-mat-toolbar {
-  background-color: $purple-dark;
-  height: 70px;
-}
-
-a.logo {
-  margin-left: auto;
-  margin-right: auto;
-
-  .logo {
-    height: 60%;
-  }
-}
-
 h1 {
   font-size: 2rem;
 }

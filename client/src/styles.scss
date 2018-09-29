@@ -17,10 +17,15 @@ body {
 
 a {
   text-decoration: none;
+  color: $link-color;
+
+  &:link, &:visited, &:hover, &active {
+    color: $link-color;
+  }
 }
 
 .mat-raised-button {
-  background-color: $green-accent;
+  background-color: $accent;
 }
 
 button {
@@ -48,11 +53,11 @@ mat-form-field {
   }
 }
 
-@media only screen and (max-width: 599px) {
-  mat-paginator {
-    width: 99.5%;
-  }
-}
+//@media only screen and (max-width: 599px) {
+//  mat-paginator {
+//    width: 99.5%;
+//  }
+//}
 
 @media only screen and (min-width: 600px) {
   mat-paginator {
@@ -70,4 +75,13 @@ mat-form-field {
   mat-paginator {
     width: 99%;
   }
+}
+
+.container {
+  margin-top: 130px;
+}
+
+.mat-menu-panel.mat-menu-before.mat-menu-below {
+  position: relative !important;
+  top: 63px !important;
 }

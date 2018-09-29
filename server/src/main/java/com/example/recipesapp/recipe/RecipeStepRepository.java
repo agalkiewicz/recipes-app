@@ -8,8 +8,6 @@ import java.util.List;
 
 @Transactional
 @Repository
-public interface RecipeRepository extends JpaRepository<Recipe, Long> {
-    List<Recipe> findAllByOrderByIdDesc();
-
-    List<Recipe> findAllByUserIdOrderByIdDesc(String id);
+public interface RecipeStepRepository extends JpaRepository<RecipeStep, Long> {
 }
+

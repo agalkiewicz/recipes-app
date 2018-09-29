@@ -1,0 +1,43 @@
+@import "src/variables.scss";
+
+$navbar-height: 80px;
+$ratio: 0.6;
+
+mat-toolbar {
+  background-color: $primary-dark;
+  height: $navbar-height;
+  position: fixed;
+  top: 0;
+  z-index: 2;
+
+  #avatar {
+    width: $navbar-height * $ratio;
+    height: $navbar-height * $ratio;
+    background-size: cover;
+    background-position: top center;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  a.logo {
+    margin-right: auto;
+
+    .logo {
+      height: $navbar-height * $ratio;
+      vertical-align: bottom;
+    }
+  }
+}
+
+.user-email {
+  border-bottom: solid 1px lightgray !important;
+  padding: 10px 10px 20px 10px !important;
+}
+
+#logout-btn {
+  margin-top: 10px;
+}
+
+.mat-menu-item {
+  font-family: Raleway, sans-serif !important;
+}
