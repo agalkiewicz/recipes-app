@@ -55,7 +55,6 @@ export class Interceptor implements HttpInterceptor {
   }
 
   private handleError(err: HttpErrorResponse): Observable<any> {
-    console.log('handle error', err);
     if (err.status === 401) {
       this.snackBar.open('Błąd uwierzytelnienia.', 'Zamknij', {
         duration: 7000

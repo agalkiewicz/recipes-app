@@ -29,8 +29,6 @@ public class HtmlAnalysisService {
 
         Document document = Jsoup.connect(url).timeout(6000).get();
 
-//        System.out.println("base uri: " + document.baseUri());
-
         Recipe recipe = null;
 
         long startTime = System.currentTimeMillis();
@@ -117,9 +115,10 @@ public class HtmlAnalysisService {
         }
 
         property = isMicrodata ? "[itemprop=name]" : "[property=name]";
+        System.out.println(scope);
         elements = scope.select(property);
         if (elements.size() != 0) {
-            stringBuilder.append(elements.first().text());
+            stringBuilder.append(elements.last().text());
             recipe.setTitle(stringBuilder.toString());
             stringBuilder.setLength(0);
         }
@@ -135,14 +134,20 @@ public class HtmlAnalysisService {
         property = isMicrodata ? "[itemprop=image]" : "[property=image]";
         elements = scope.select(property);
         if (elements.size() != 0) {
-            Element image = elements.last();
+            Element image = elements.first();
             elements = image.select("[src]");
-            String imageUrl = elements.get(0).absUrl("src");
-
-            if (!(imageUrl.contains("http://") || imageUrl.contains("https://"))) {
-                imageUrl = "http://" + imageUrl;
+            if (elements.size() == 0) {
+                property = isMicrodata ? "[itemprop=url]" : "[property=url]";
+                elements = scope.select(property);
             }
-            recipe.setImage(imageUrl);
+            if (elements.size() != 0) {
+                String imageUrl = elements.last().absUrl("src");
+
+                if (!(imageUrl.contains("http://") || imageUrl.contains("https://"))) {
+                    imageUrl = "http://" + imageUrl;
+                }
+                recipe.setImage(imageUrl);
+            }
         }
 
         return recipe;

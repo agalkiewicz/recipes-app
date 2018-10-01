@@ -24,7 +24,6 @@ export class NavbarComponent implements OnInit {
   }
 
   signOut() {
-    console.log('sign out');
     this.signInService.signOut().then(
       () => {
         this.guard.isSignedIn = false;

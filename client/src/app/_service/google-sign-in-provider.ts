@@ -35,7 +35,6 @@ export class GoogleSignInProvider implements SignInProvider {
     let user: User = new User();
     let profile = this.auth2.currentUser.get().getBasicProfile();
     let authResponseObj = this.auth2.currentUser.get().getAuthResponse(true);
-    console.log('authResponseObj', authResponseObj);
     user.name = profile.getName();
     user.email = profile.getEmail();
     user.imageUrl = profile.getImageUrl();

@@ -2,13 +2,18 @@
   <div *ngIf="recipe">
     <div>
       <small class="breadcrumb">
-        <a routerLink="/recipes">< powrót do listy przepisów</a>
+        <a routerLink="/recipes"><i class="fas fa-chevron-left"></i> powrót do listy przepisów</a>
       </small>
     </div>
-    <h2 class="title">{{ recipe.title }}</h2>
-    <a [href]="recipe.url"
-       target="_blank"
-       class="url">link do strony</a>
+    <h2 class="title">
+      {{ recipe.title }}
+      <small>
+        <a [href]="recipe.url"
+           target="_blank"
+           class="url">link do strony</a>
+      </small>
+    </h2>
+
     <div class="recipe-description">{{ recipe.description }}</div>
 
     <h4>Składniki</h4>

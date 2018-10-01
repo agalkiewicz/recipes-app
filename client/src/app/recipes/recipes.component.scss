@@ -10,6 +10,7 @@
 
   .mat-card-image {
     height: 210px;
+    margin-top: 0;
   }
 
   .recipe-title {
@@ -60,6 +61,10 @@
   display: flex;
   justify-content: space-between;
   margin-top: 10px;
+
+  mat-form-field {
+    height: auto;
+  }
 }
 
 .no-image {
@@ -88,3 +93,27 @@
   }
 }
 
+%fab-btn {
+  position: fixed;
+  right: 7%;
+  z-index: 2;
+}
+
+.search-btn {
+  @extend %fab-btn;
+  bottom: 60px;
+}
+
+.add-btn {
+  @extend %fab-btn;
+  bottom: 130px;
+}
+
+.fa-search,
+.fa-plus {
+  font-size: 20px;
+}
+
+.container {
+  margin-top: 100px;
+}

@@ -12,4 +12,6 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     List<Recipe> findAllByOrderByIdDesc();
 
     List<Recipe> findAllByIsDeletedFalseAndUserIdOrderByIdDesc (String userId);
+
+    Recipe findByUrlAndIsDeletedFalse(String url);
 }

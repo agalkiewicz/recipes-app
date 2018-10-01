@@ -7,8 +7,6 @@ import com.example.recipesapp.exceptions.ScopeNotFoundException;
 import com.example.recipesapp.htmlanalysis.HtmlAnalysisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -66,24 +64,26 @@ public class RecipeController {
     @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity add(@RequestBody RecipeUrlDTO recipeUrlDTO) {
         try {
-            Recipe recipe = htmlAnalysisService.analyse(recipeUrlDTO.getUrl());
-            String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-            User user = this.userRepository.findById(userId);
-            recipe.setUser(user);
-            recipeRepository.save(recipe);
+            Recipe foundRecipe = this.recipeRepository.findByUrlAndIsDeletedFalse(recipeUrlDTO.getUrl());
+            if (foundRecipe == null) {
+                Recipe recipe = htmlAnalysisService.analyse(recipeUrlDTO.getUrl());
+                String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+                User user = this.userRepository.findById(userId);
+                recipe.setUser(user);
+                recipeRepository.save(recipe);
 
-            logger.info("Hardly created recipe: {}", recipe.toString());
+                logger.info("Hardly created recipe: {}", recipe.toString());
 
-            return new ResponseEntity<>(new RecipeDTO(recipe), HttpStatus.CREATED);
+                return new ResponseEntity<>(new RecipeDTO(recipe), HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>(new Error("Dodano już przepis z tej strony."), HttpStatus.UNPROCESSABLE_ENTITY);
+            }
         } catch (IOException e) {
             logger.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (ScopeNotFoundException e) {
             logger.error(e.getMessage());
             return new ResponseEntity<>(new Error("Nie można dodać przepisu z tej strony. Strona nie implementuje znaczników Schema.org."), HttpStatus.UNPROCESSABLE_ENTITY);
-        } catch (DataIntegrityViolationException e) {
-            logger.error(e.getMessage());
-            return new ResponseEntity<>(new Error("Dodano już przepis z tej strony."), HttpStatus.UNPROCESSABLE_ENTITY);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

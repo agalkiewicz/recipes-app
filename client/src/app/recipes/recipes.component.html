@@ -1,5 +1,10 @@
 <div class="container">
-  <div class="recipe-search">
+  <div>
+    <button mat-fab class="search-btn" (click)="showSearchDiv()"><i class="fas fa-search"></i></button>
+    <button mat-fab class="add-btn" (click)="showAddRecipeDiv()"><i class="fas fa-plus"></i></button>
+  </div>
+
+  <div class="recipe-search" *ngIf="showSearch">
     <div class="input-div">
       <mat-form-field class="chip-list">
         <mat-chip-list #chipList>
@@ -9,21 +14,22 @@
             <mat-icon matChipRemove>cancel</mat-icon>
           </mat-chip>
         </mat-chip-list>
-        <input placeholder="Szukaj przepisu po składnikach lub nazwie dania..."
+        <input #searchInput placeholder="Składniki lub nazwa dania"
                [matChipInputFor]="chipList"
                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                [matChipInputAddOnBlur]="false"
-               (matChipInputTokenEnd)="addSearchTerm($event)">
+               (matChipInputTokenEnd)="addSearchTerm($event)"
+               matInput>
       </mat-form-field>
 
       <button id="search-recipe-btn" mat-raised-button (click)="search()">Szukaj</button>
     </div>
   </div>
 
-  <div class="add-new-recipe">
+  <div class="add-new-recipe" *ngIf="showAddDiv">
     <div class="input-div">
       <mat-form-field>
-        <input #recipeUrl matInput placeholder="Wklej adres www strony z przepisem">
+        <input #recipeUrl matInput placeholder="Adres strony www">
       </mat-form-field>
       <button id="add-recipe-btn" mat-raised-button (click)="add(recipeUrl.value); recipeUrl.value=''">Dodaj przepis
       </button>
@@ -33,7 +39,7 @@
   <mat-paginator #topPaginator
                  [length]="recipesLength"
                  [pageSize]="pageSize"
-                 [pageSizeOptions]="[4, 12, 18]"
+                 [pageSizeOptions]="[12, 24, 36]"
                  (page)="changeListTop($event)"
                  class="top-paginator">
   </mat-paginator>
@@ -59,7 +65,7 @@
   <mat-paginator #bottomPaginator
                  [length]="recipesLength"
                  [pageSize]="pageSize"
-                 [pageSizeOptions]="[4, 12, 18]"
+                 [pageSizeOptions]="[12, 24, 36]"
                  (page)="changeListBottom($event)"
                  class="bottom-paginator">
   </mat-paginator>

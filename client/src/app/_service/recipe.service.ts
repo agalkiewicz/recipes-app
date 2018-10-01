@@ -5,11 +5,12 @@ import {RecipeUrlDto} from '../dto/recipe-url-dto';
 import {Recipe} from '../_model/recipe';
 import {catchError} from "rxjs/operators";
 import {of} from "rxjs/observable/of";
+import {environment} from "../../environments/environment";
 
 @Injectable()
 export class RecipeService {
 
-  private recipesUrl = 'http://localhost:8080/api/recipes';
+  private recipesUrl = `${environment.apiURL}/api/recipes`;
 
   constructor(private http: HttpClient) {
   }
@@ -17,7 +18,6 @@ export class RecipeService {
   add(url: RecipeUrlDto): Observable<Recipe> {
     return this.http.post<Recipe>(this.recipesUrl, url).pipe(
       catchError(error => {
-        console.log('error', error);
         return of(error);
       })
     );
@@ -33,8 +33,6 @@ export class RecipeService {
   }
 
   searchByTerms(terms: string[]) {
-    console.log('_service searchRecipesByTerms', terms);
-
     let query = '';
     terms.forEach(term => {
       query += 'terms=' + term + '&'
