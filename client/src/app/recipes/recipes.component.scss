@@ -1,9 +1,16 @@
 .recipe-card {
-  height: 280px;
+  height: 320px;
   margin-bottom: 5%;
+  padding-top: 0;
+  cursor: pointer;
+
+  &:focus {
+    outline: 0;
+  }
 
   .mat-card-image {
     height: 210px;
+    margin-top: 0;
   }
 
   .recipe-title {
@@ -54,6 +61,10 @@
   display: flex;
   justify-content: space-between;
   margin-top: 10px;
+
+  mat-form-field {
+    height: auto;
+  }
 }
 
 .no-image {
@@ -69,4 +80,40 @@
   text-align: center;
   width: 100%;
   padding: 50px;
+}
+
+.trash-icon {
+  position: absolute;
+  bottom: 15px;
+  right: 20px;
+  font-size: 24px;
+
+  &:hover, :active {
+    color: #C3FF00;
+  }
+}
+
+%fab-btn {
+  position: fixed;
+  right: 7%;
+  z-index: 2;
+}
+
+.search-btn {
+  @extend %fab-btn;
+  bottom: 60px;
+}
+
+.add-btn {
+  @extend %fab-btn;
+  bottom: 130px;
+}
+
+.fa-search,
+.fa-plus {
+  font-size: 20px;
+}
+
+.container {
+  margin-top: 100px;
 }

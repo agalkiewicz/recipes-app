@@ -1,10 +1,13 @@
-import {SignInProvider} from "./dto/sign-in-provider";
-import {User} from "./dto/user";
+import {SignInProvider} from "../_model/sign-in-provider";
+import {User} from "../_model/user";
+import {Injectable} from "@angular/core";
+import {environment} from "../../environments/environment";
 
 declare let gapi: any;
 
+@Injectable()
 export class GoogleSignInProvider implements SignInProvider {
-  private clientId = '680092708222-dv2se5gsv573lmas6saf6j4m7niee35b.apps.googleusercontent.com';
+  private clientId = environment.clientId;
   private scope = [
     'profile',
     'email'
@@ -32,7 +35,6 @@ export class GoogleSignInProvider implements SignInProvider {
     let user: User = new User();
     let profile = this.auth2.currentUser.get().getBasicProfile();
     let authResponseObj = this.auth2.currentUser.get().getAuthResponse(true);
-    console.log('authResponseObj', authResponseObj);
     user.name = profile.getName();
     user.email = profile.getEmail();
     user.imageUrl = profile.getImageUrl();

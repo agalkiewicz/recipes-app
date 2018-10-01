@@ -1,9 +1,9 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {Recipe} from '../dto/recipe';
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Recipe} from '../_model/recipe';
 import {RecipeUrlDto} from '../dto/recipe-url-dto';
-import {RecipeService} from '../recipe.service';
-import {SignInService} from "../service/sign-in.service";
-import {MatChipInputEvent, MatPaginator, MatSnackBar, PageEvent} from '@angular/material';
+import {RecipeService} from '../_service/recipe.service';
+import {SignInService} from "../_service/sign-in.service";
+import {MatChipInputEvent, MatInput, MatPaginator, MatSnackBar, PageEvent} from '@angular/material';
 import {COMMA, ENTER} from "@angular/cdk/keycodes";
 import {HttpErrorResponse} from "@angular/common/http";
 
@@ -20,6 +20,8 @@ export class RecipesComponent implements OnInit, AfterViewInit {
   pageSize = 12;
   @ViewChild('bottomPaginator') bottomPaginator: MatPaginator;
   @ViewChild('topPaginator') topPaginator: MatPaginator;
+  @ViewChild('searchInput') searchInput: ElementRef;
+  @ViewChild('recipeUrl') recipeUrl: ElementRef;
 
   readonly separatorKeysCodes: number[] = [COMMA, ENTER];
   searchTerms: string[];
@@ -30,6 +32,9 @@ export class RecipesComponent implements OnInit, AfterViewInit {
               private snackBar: MatSnackBar) {
     this.searchTerms = [];
   }
+
+  showSearch = false;
+  showAddDiv = false;
 
   ngOnInit() {
 
@@ -46,17 +51,20 @@ export class RecipesComponent implements OnInit, AfterViewInit {
     }
     this.recipeService.add({url: url} as RecipeUrlDto)
       .subscribe((recipe: Recipe) => {
-        this.recipes.unshift(recipe);
-        if (this.topPaginator.pageIndex === 0) {
+          this.recipes.unshift(recipe);
           let pageEvent = new PageEvent();
-          pageEvent.pageIndex = 0;
+          pageEvent.pageIndex = this.topPaginator.pageIndex;
           pageEvent.length = this.recipes.length;
           pageEvent.pageSize = this.topPaginator.pageSize;
           this.changeList(pageEvent);
-        }
-      },
+
+          this.showAddDiv = false;
+
+          this.snackBar.open('Pomyślnie dodano przepis.', 'Zamknij', {
+            duration: 5000
+          });
+        },
         (err: HttpErrorResponse) => {
-        console.log('err in component', err);
         });
   }
 
@@ -107,19 +115,17 @@ export class RecipesComponent implements OnInit, AfterViewInit {
   }
 
   search() {
-    this.searchRecipesByTerms();
-  }
-
-  private searchRecipesByTerms() {
-    this.recipeService.searchByTerms(this.searchTerms)
-      .subscribe(recipes => {
-        if (!recipes.length) {
-          this.noRecipesInfo = 'Nie znaleziono przepisów pasujących do kryteriów.';
-        }
-        this.recipes = recipes;
-        this.recipesLength = this.recipes.length;
-        this.pagedRecipes = this.recipes.slice(0, this.pageSize);
-      });
+    if (this.searchTerms.length) {
+      this.recipeService.searchByTerms(this.searchTerms)
+        .subscribe(recipes => {
+          if (!recipes.length) {
+            this.noRecipesInfo = 'Nie znaleziono przepisów pasujących do kryteriów.';
+          }
+          this.recipes = recipes;
+          this.recipesLength = this.recipes.length;
+          this.pagedRecipes = this.recipes.slice(0, this.pageSize);
+        });
+    }
   }
 
   private getAllRecipes() {
@@ -129,5 +135,50 @@ export class RecipesComponent implements OnInit, AfterViewInit {
         this.recipesLength = this.recipes.length;
         this.pagedRecipes = this.recipes.slice(0, this.pageSize);
       });
+  }
+
+  removeRecipe(recipe: Recipe, event: any) {
+    event.stopPropagation();
+
+    this.recipeService.update(recipe.id, {isDeleted: true}).subscribe(() => {
+      const recipeIndex = this.recipes.indexOf(recipe);
+      this.recipes.splice(recipeIndex, 1);
+      let pageEvent = new PageEvent();
+      pageEvent.pageIndex = this.topPaginator.pageIndex;
+      pageEvent.length = this.recipes.length;
+      pageEvent.pageSize = this.topPaginator.pageSize;
+      this.changeList(pageEvent);
+
+      const snackBar = this.snackBar.open('Pomyślnie usunięto przepis.', 'Cofnij', {
+        duration: 5000
+      });
+      snackBar.onAction().subscribe(() => {
+        this.recipeService.update(recipe.id, {isDeleted: false}).subscribe(() => {
+          this.recipes.splice(recipeIndex, 0, recipe);
+          pageEvent.pageIndex = this.topPaginator.pageIndex;
+          pageEvent.length = this.recipes.length;
+          pageEvent.pageSize = this.topPaginator.pageSize;
+          this.changeList(pageEvent);
+        });
+      });
+    });
+  }
+
+  showSearchDiv() {
+    this.showSearch = true;
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+    setTimeout(() => {
+      this.searchInput.nativeElement.focus();
+    }, 200);
+  }
+
+  showAddRecipeDiv() {
+    this.showAddDiv = true;
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+    setTimeout(() => {
+      this.recipeUrl.nativeElement.focus();
+    }, 200);
   }
 }

@@ -10,20 +10,21 @@ import {
 } from '@angular/material';
 
 import {AppComponent} from './app.component';
-import {RecipeService} from './recipe.service';
+import {RecipeService} from './_service/recipe.service';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {RecipesComponent} from './recipes/recipes.component';
 import {MessagesComponent} from './messages/messages.component';
-import {MessageService} from './message.service';
+import {MessageService} from './_service/message.service';
 import {RecipeComponent} from './recipe/recipe.component';
-import {SignInService} from "./service/sign-in.service";
-import {MatPaginatorIntlPL} from './mat-paginator-intl-pl';
-import {AppRoutingModule} from './app-routing.module';
+import {SignInService} from "./_service/sign-in.service";
+import {MatPaginatorIntlPL} from './_helper/mat-paginator-intl-pl';
+import {AppRoutingModule} from './_module/app-routing.module';
 import {SignInComponent} from './sign-in/sign-in.component';
 import {Interceptor} from "./_interceptor/interceptor";
 import {Router} from "@angular/router";
-import {AuthGuard} from "./_guards/AuthGuard";
+import {AuthGuard} from "./_guard/AuthGuard";
 import { NavbarComponent } from './navbar/navbar.component';
+import {GoogleSignInProvider} from "./_service/google-sign-in-provider";
 
 @NgModule({
   declarations: [
@@ -70,7 +71,8 @@ import { NavbarComponent } from './navbar/navbar.component';
         MatSnackBar
       ]
     },
-    AuthGuard
+    AuthGuard,
+    GoogleSignInProvider
   ],
   bootstrap: [AppComponent]
 })

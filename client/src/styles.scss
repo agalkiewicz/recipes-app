@@ -24,8 +24,10 @@ a {
   }
 }
 
-.mat-raised-button {
-  background-color: $accent;
+.mat-raised-button,
+.mat-fab {
+  background-color: $accent !important;
+  color: #000 !important;
 }
 
 button {
@@ -43,7 +45,7 @@ mat-form-field {
 
 @media only screen and (max-width: 585px) {
   .mat-paginator-page-size {
-    order: 1;
+    //order: 1;
   }
 }
 
@@ -77,11 +79,15 @@ mat-form-field {
   }
 }
 
-.container {
-  margin-top: 130px;
-}
-
 .mat-menu-panel.mat-menu-before.mat-menu-below {
   position: relative !important;
   top: 63px !important;
+}
+
+.mat-paginator-range-label {
+  margin: 0 !important;
+}
+
+.mat-chip:not(.mat-basic-chip)+.mat-chip:not(.mat-basic-chip) {
+  margin: 0 !important;
 }

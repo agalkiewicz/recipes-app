@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {SignInService} from "./service/sign-in.service";
-import {User} from "./dto/user";
+import {SignInService} from "./_service/sign-in.service";
+import {User} from "./_model/user";
 
 
 @Component({
@@ -9,7 +9,7 @@ import {User} from "./dto/user";
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements AfterViewInit, OnInit {
-  title = 'Aplikacja kulinarna';
+  title = 'Przepiśnik';
   user: User;
   isMenuVisible = false;
 
@@ -24,8 +24,6 @@ export class AppComponent implements AfterViewInit, OnInit {
         currentUser.idToken = user.idToken;
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
       }
-      console.log('user changed');
-      console.log(user);
     });
   }
 

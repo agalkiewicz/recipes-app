@@ -1,8 +1,8 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
-import {SignInService} from "../service/sign-in.service";
-import {User} from "../dto/user";
+import {SignInService} from "../_service/sign-in.service";
+import {User} from "../_model/user";
 import {Router} from "@angular/router";
-import {AuthGuard} from "../_guards/AuthGuard";
+import {AuthGuard} from "../_guard/AuthGuard";
 import {MatSnackBar} from "@angular/material";
 
 @Component({
@@ -24,7 +24,6 @@ export class NavbarComponent implements OnInit {
   }
 
   signOut() {
-    console.log('sign out');
     this.signInService.signOut().then(
       () => {
         this.guard.isSignedIn = false;

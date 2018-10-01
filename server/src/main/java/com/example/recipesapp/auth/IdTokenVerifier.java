@@ -22,7 +22,7 @@ public class IdTokenVerifier {
 
     private static final HttpTransport transport = new NetHttpTransport();
     private static final JsonFactory jsonFactory = new JacksonFactory();
-    private final String CLIENT_ID = "680092708222-dv2se5gsv573lmas6saf6j4m7niee35b.apps.googleusercontent.com";
+    private final String CLIENT_ID = "680092708222-8u5cd3vo7lm2end0ua30tpglbrreaik4.apps.googleusercontent.com";
 
     public IdTokenVerifier() {
     }
